@@ -1,0 +1,2199 @@
+/* ================================================================
+   MITOLOGÍA GRIEGA — style.css
+   Estructura: Variables → Reset → Base → Nav → Hero →
+               Secciones → Transiciones → Tarjetas → Footer
+================================================================ */
+
+/* ----------------------------------------------------------------
+   VARIABLES GLOBALES DE DISEÑO
+   Paleta inspirada en cerámica ática, oro, mármol y bronce antiguo
+---------------------------------------------------------------- */
+:root {
+  /* Colores por mundo */
+  --olympus-sky:    #a8d4f5;
+  --olympus-deep:   #2a5f8f;
+  --olympus-gold:   #e8c84a;
+  --olympus-light:  #fff8e7;
+
+  --earth-stone:    #c8a87a;
+  --earth-sand:     #e8d5a8;
+  --earth-dark:     #4a3520;
+  --earth-terr:     #8b4513;
+
+  --sea-deep:       #032030;
+  --sea-mid:        #0a5070;
+  --sea-light:      #1a9090;
+  --sea-foam:       #60d0c0;
+
+  --hades-dark:     #0a0508;
+  --hades-ember:    #c83010;
+  --hades-glow:     #ff6020;
+  --hades-ash:      #201518;
+
+  /* Tipografía */
+  --font-display:   'Cinzel Decorative', serif;
+  --font-heading:   'Cinzel', serif;
+  --font-body:      'Crimson Pro', serif;
+
+  /* Espaciado */
+  --section-pad:    8vh 5vw;
+  --card-radius:    12px;
+
+  /* Transiciones */
+  --ease-smooth:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ================================================================
+   BARRA DE PROGRESO DE SCROLL
+================================================================ */
+#progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--olympus-gold), #f0d972);
+  box-shadow: 0 0 8px rgba(232, 200, 74, 0.6);
+  z-index: 9999;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.12s ease-out;
+}
+
+/* ----------------------------------------------------------------
+   RESET Y BASE
+---------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;           /* Scroll suave nativo */
+  scroll-padding-top: 6rem;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #000;
+  color: #f0e8d0;
+  overflow-x: hidden;
+  cursor: default;
+  /* Ocultar scrollbar vertical para efecto inmersivo */
+  scrollbar-width: none;
+}
+
+/* Ocultar scrollbar en navegadores Webkit (Chrome, Safari, Edge) */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cursor personalizado: símbolo griego */
+body::after {
+  content: '';
+  display: none;
+}
+
+/* ================================================================
+   BARRA DE NAVEGACIÓN (aparece con scroll via JS)
+   🔧 IMPORTANTE: Permanecer FIJA sin transformaciones 3D
+================================================================ */
+#main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 3rem;
+  background: rgba(10, 5, 2, 0.0);          /* Inicia transparente */
+  backdrop-filter: blur(0px);
+  border-bottom: 1px solid rgba(232, 200, 74, 0);
+  transition:
+    background-color 0.35s var(--ease-smooth),
+    border-color 0.35s var(--ease-smooth),
+    backdrop-filter 0.35s var(--ease-smooth);
+}
+
+/* Clase que JS añade al hacer scroll */
+#main-nav.scrolled {
+  background: rgba(10, 5, 2, 0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(232, 200, 74, 0.3);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--olympus-gold);
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 20px rgba(232, 200, 74, 0.5);
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+}
+
+.nav-links a {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: rgba(240, 232, 208, 0.7);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--olympus-gold);
+}
+
+/* ----------------------------------------------------------------
+   PANTALLA HERO (intro)
+   Fondo: gradiente nocturno con estrellas generadas por JS
+---------------------------------------------------------------- */
+.hero-intro {
+  position: relative;
+  min-height: 116vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Cielo nocturno profundo sin foco central */
+  background: linear-gradient(180deg, #102848 0%, #0a1830 48%, #050810 100%);
+}
+
+.hero-intro::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26vh;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--hero-bottom-fade-opacity, 0);
+  background: linear-gradient(180deg, rgba(5,8,16,0) 0%, rgba(5,8,16,0.72) 62%, #050810 100%);
+}
+
+
+/* Contenedor de estrellas (dots) generados por JS */
+#stars-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Estrellas de fondo sueltas (div.star generados por JS) ── */
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: starTwinkle var(--dur, 3s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: var(--min-op, 0.3); transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.4); }
+}
+
+/* ── Keyframes de constelaciones ── */
+/*
+ * Las animaciones de líneas y estrellas se aplican inline desde JS
+ * (style.animation = "drawLine ...") para evitar conflictos con clases
+ * y reutilización de elementos. Solo necesitamos los @keyframes aquí.
+ */
+
+/* Trazo de línea: stroke-dashoffset va de su valor inicial → 0 */
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Aparición de estrella: fade puro sin escala */
+@keyframes starFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Parpadeo continuo suave una vez visible */
+@keyframes constShimmer {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 0.92; }
+}
+
+/* prefers-reduced-motion: sin animaciones */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes drawLine     { to   { stroke-dashoffset: 0; } }
+  @keyframes starFadeIn   { to   { opacity: 1; } }
+  @keyframes constShimmer { 0%, 100% { opacity: 0.75; } }
+}
+
+/* Contenido central del hero */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--olympus-gold);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.5s var(--ease-smooth) forwards;
+}
+
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  line-height: 0.9;
+  margin-bottom: 2rem;
+}
+
+.title-line {
+  display: block;
+  font-size: clamp(4rem, 12vw, 10rem);
+  color: #f0e8d0;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease-smooth) forwards;
+}
+
+.title-line:first-child  { animation-delay: 0.8s; }
+.title-line.accent       {
+  animation-delay: 1.1s;
+  /* Color dorado con degradado */
+  background: linear-gradient(135deg, var(--olympus-gold) 0%, #fff8d0 50%, var(--olympus-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(232, 200, 74, 0.4));
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  font-style: italic;
+  line-height: 1.8;
+  color: rgba(240, 232, 208, 0.7);
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 1s 1.4s var(--ease-smooth) forwards;
+}
+
+.hero-cta {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--olympus-gold);
+  text-decoration: none;
+  border: 1px solid rgba(232, 200, 74, 0.4);
+  padding: 1rem 2.5rem;
+  border-radius: 40px;
+  transition: all 0.4s;
+  opacity: 0;
+  animation: fadeUp 1s 1.8s var(--ease-smooth) forwards;
+}
+
+.hero-cta:hover {
+  background: rgba(232, 200, 74, 0.12);
+  border-color: var(--olympus-gold);
+  box-shadow: 0 0 30px rgba(232, 200, 74, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Columnas griegas decorativas a los lados del hero */
+.column {
+  position: absolute;
+  bottom: 0;
+  width: 60px;
+  height: 55vh;
+  z-index: 1;
+}
+
+.column::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Patrón de tambores de columna con CSS */
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(240, 232, 208, 0.15) 0px,
+      rgba(240, 232, 208, 0.08) 2px,
+      rgba(240, 232, 208, 0.08) 28px,
+      rgba(240, 232, 208, 0.15) 30px
+    );
+  border-radius: 4px;
+}
+
+.column::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -10px;
+  right: -10px;
+  height: 20px;
+  background: rgba(240, 232, 208, 0.15);
+  border-radius: 3px 3px 0 0;
+}
+
+.left-col  { left: 5%; }
+.right-col { right: 5%; }
+
+/* ================================================================
+   SECCIONES PRINCIPALES — base compartida con transformaciones 3D
+================================================================ */
+.world-section {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: var(--section-pad);
+  opacity: 1;
+  content-visibility: auto;
+  contain-intrinsic-size: 100vh;
+  transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.section-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  animation: slideUpFade 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Badge numérico de sección */
+.section-badge {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  padding: 0.4rem 1.5rem;
+  border: 1px solid currentColor;
+  border-radius: 40px;
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+/* Título principal de cada sección */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin-bottom: 3rem;
+  line-height: 1.2;
+}
+
+/* ----------------------------------------------------------------
+   SECCIÓN 1 — OLIMPO
+   Fondo: azul cielo con degradado hacia dorado en la base
+---------------------------------------------------------------- */
+.olympus-section {
+  background:
+    linear-gradient(180deg,
+      #87c4f0 0%,
+      #c8e8f8 35%,
+      #e8f4ff 60%,
+      #fff5d0 85%,
+      #ffe8a0 100%
+    );
+  color: var(--olympus-deep);
+}
+
+
+.olympus-section .section-badge {
+  color: var(--olympus-deep);
+  border-color: rgba(42, 95, 143, 0.4);
+}
+
+.olympus-section .section-title {
+  color: var(--olympus-deep);
+  text-shadow: 0 2px 20px rgba(255,255,255,0.8);
+}
+
+/* Nubes decorativas de fondo en el Olimpo */
+.sky-clouds {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  filter: blur(30px);
+}
+
+/* Cada nube en posición diferente */
+.c1 { width: 300px; height: 120px; top: 10%;  left: -5%;  animation: cloudDrift 18s ease-in-out infinite; }
+.c2 { width: 200px; height: 80px;  top: 20%;  right: 5%;  animation: cloudDrift 22s ease-in-out infinite reverse; }
+.c3 { width: 250px; height: 100px; top: 5%;   left: 30%;  animation: cloudDrift 16s ease-in-out infinite 4s; }
+.c4 { width: 180px; height: 70px;  top: 35%;  right: 20%; animation: cloudDrift 20s ease-in-out infinite 8s; }
+
+/* Rayos de luz divinos (Dios rays) */
+.god-rays {
+  display: none;
+}
+
+/* Figura de Hermes centrada */
+.mythic-figure {
+  margin: 0 auto 3rem;
+  width: min(400px, 80vw);
+  filter: drop-shadow(0 10px 40px rgba(232,200,74,0.4));
+  animation: floatFigure 6s ease-in-out infinite;
+}
+
+.figure-svg {
+  width: 100%;
+  height: auto;
+}
+
+/* ----------------------------------------------------------------
+   SECCIÓN 2 — TIERRA
+   Fondo: terracota, piedra, cielo mediterráneo
+---------------------------------------------------------------- */
+.earth-section {
+  background:
+    linear-gradient(180deg,
+      #d4a870 0%,
+      #c89050 25%,
+      #b07840 55%,
+      #8b6030 80%,
+      #6a4820 100%
+    );
+  color: var(--earth-sand);
+}
+
+.earth-section .section-badge {
+  color: var(--earth-sand);
+  border-color: rgba(232, 213, 168, 0.4);
+}
+
+.earth-section .section-title {
+  color: var(--earth-sand);
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+}
+
+/* Partenón de fondo (perspectiva) */
+.parthenon-bg {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 800px;
+  z-index: 0;
+  opacity: 0.25;
+  transition: transform 0.1s linear;
+}
+
+.parthenon-columns {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 45vh;
+}
+
+.pcol {
+  width: 7%;
+  height: 100%;
+  background: rgba(255, 245, 220, 0.9);
+  /* Efecto de tambores de columna */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.05) 0px,
+    rgba(255,255,255,0.1) 2px,
+    rgba(255,255,255,0.1) 20px,
+    rgba(0,0,0,0.05) 22px
+  );
+  border-radius: 4px 4px 0 0;
+}
+
+.parthenon-roof {
+  height: 8vh;
+  background: rgba(255, 245, 220, 0.9);
+  clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+  margin-top: -1px;
+}
+
+/* Escena de batalla SVG */
+.battle-scene {
+  margin: 0 auto 3rem;
+  width: min(600px, 90vw);
+  filter: drop-shadow(0 15px 40px rgba(0,0,0,0.5));
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.battle-svg { width: 100%; height: auto; }
+
+/* ----------------------------------------------------------------
+   SECCIÓN 3 — MAR
+   Fondo: profundidades submarinas con degradado azul-verde
+---------------------------------------------------------------- */
+.sea-section {
+  background:
+    linear-gradient(180deg,
+      #0a2840 0%,
+      #0a3d5a 20%,
+      #083050 50%,
+      #042030 80%,
+      #021018 100%
+    );
+  color: var(--sea-foam);
+}
+
+.sea-section .section-badge {
+  color: var(--sea-foam);
+  border-color: rgba(96, 208, 192, 0.4);
+}
+
+.sea-section .section-title {
+  color: var(--sea-foam);
+  text-shadow: 0 0 30px rgba(96, 208, 192, 0.4);
+}
+
+/* Fondo marino: plantas, corales */
+.seabed {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Plantas marinas (CSS puro) */
+.seaplant {
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  background: linear-gradient(to top, rgba(20,120,80,0.8), rgba(40,180,100,0.3));
+  border-radius: 4px;
+  transform-origin: bottom center;
+  animation: plantSway var(--sway-dur, 4s) ease-in-out infinite;
+}
+
+.sp1 { left: 5%;  height: 15vh; --sway-dur: 3.5s; animation-delay: 0s; }
+.sp2 { left: 12%; height: 20vh; --sway-dur: 4.5s; animation-delay: 0.5s; }
+.sp3 { left: 20%; height: 12vh; --sway-dur: 3s;   animation-delay: 1s; }
+.sp4 { right: 15%;height: 18vh; --sway-dur: 4s;   animation-delay: 0.7s; }
+.sp5 { right: 8%; height: 14vh; --sway-dur: 3.8s; animation-delay: 1.5s; }
+
+/* Corales */
+.coral {
+  position: absolute;
+  bottom: 0;
+  width: 40px;
+  height: 80px;
+  border-radius: 50% 50% 0 0;
+}
+.coral1 { left: 8%;   background: rgba(200, 60, 60, 0.5);  animation: plantSway 5s ease-in-out infinite; }
+.coral2 { left: 30%;  background: rgba(240, 140, 20, 0.4); animation: plantSway 4s ease-in-out infinite 1s; }
+.coral3 { right: 20%; background: rgba(180, 40, 100, 0.45);animation: plantSway 5.5s ease-in-out infinite 0.5s; }
+
+/* Partículas del mar */
+#sea-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Cada partícula (generada por JS) */
+.sea-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(100, 200, 220, 0.4);
+  animation: bubbleRise var(--dur, 8s) ease-in infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.sea-figure, .sea-svg { width: 100%; height: auto; }
+.sea-figures {
+  margin: 0 auto 3rem;
+  width: min(600px, 90vw);
+  filter: drop-shadow(0 10px 40px rgba(0, 120, 180, 0.5));
+  animation: floatFigure 7s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------------
+   SECCIÓN 4 — INFRAMUNDO
+   Fondo: negro absoluto con destellos de rojo y brasa
+---------------------------------------------------------------- */
+.underworld-section {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(130, 45, 28, 0.28) 0%, rgba(130, 45, 28, 0) 38%),
+    radial-gradient(circle at 15% 68%, rgba(55, 96, 112, 0.18) 0%, rgba(55, 96, 112, 0) 32%),
+    linear-gradient(180deg,
+      #171014 0%,
+      #241016 38%,
+      #2a120d 72%,
+      #14090c 100%
+    );
+  color: rgba(255, 223, 185, 0.96);
+}
+
+.underworld-section .section-badge {
+  color: #ff9a58;
+  border-color: rgba(255, 154, 88, 0.58);
+}
+
+.underworld-section .section-title {
+  color: #ffd7a8;
+  text-shadow:
+    0 0 26px rgba(255, 128, 54, 0.58),
+    0 4px 18px rgba(0, 0, 0, 0.72);
+}
+
+/* Río Estigia decorativo */
+.styx-river {
+  position: absolute;
+  bottom: 30%;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(
+    to right,
+    rgba(20,60,80,0) 0%,
+    rgba(30,80,100,0.3) 20%,
+    rgba(50,100,120,0.4) 50%,
+    rgba(30,80,100,0.3) 80%,
+    rgba(20,60,80,0) 100%
+  );
+  animation: riverFlow 8s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Partículas de ceniza */
+#ash-particles { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+
+.ash-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(150, 100, 80, 0.4);
+  animation: ashFall var(--dur, 12s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Cancerbero */
+.cerberus-figure {
+  margin: 0 auto 3rem;
+  width: min(580px, 90vw);
+  filter:
+    drop-shadow(0 0 20px rgba(200,48,16,0.5))
+    drop-shadow(0 20px 60px rgba(0,0,0,0.8));
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.cerberus-svg { width: 100%; height: auto; }
+
+/* ----------------------------------------------------------------
+   ZONAS DE TRANSICIÓN — versión cinematográfica suave
+   Altura ampliada + fusión con secciones mediante pseudo-elementos
+   + partículas animadas + label con fade-in al scroll
+---------------------------------------------------------------- */
+.transition-zone {
+  position: relative;
+  /* Altura generosa para mostrar el degradado completo entre mundos */
+  height: 380px;
+  /* overflow:hidden contiene todas las partículas y nubes dentro del área */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* z-index bajo: nunca debe tapar el contenido de las secciones vecinas */
+  isolation: isolate;
+  z-index: 1;
+}
+
+/*
+   Pseudo-elementos ::before y ::after comunes a todas las transiciones.
+   Cada uno ocupa los primeros/últimos 100px de la zona y aplica
+   un degradado hacia transparent — el color específico lo define
+   cada ID (#transition-clouds, etc.) con sus propias reglas.
+   z-index:6 los pone por encima del fondo pero debajo del label (z:7).
+*/
+.transition-zone::before,
+.transition-zone::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 120px;
+  z-index: 6;
+  pointer-events: none;
+}
+.transition-zone::before { top: 0; }     /* Fusión con la sección de arriba */
+.transition-zone::after  { bottom: 0; } /* Fusión con la sección de abajo */
+
+/*
+   Etiqueta descriptiva del viaje entre mundos.
+   z-index:7 la mantiene por encima de todas las capas decorativas.
+   labelPulse anima levemente la opacidad y el espaciado para que
+   parezca que la frase "respira" junto con la transición.
+*/
+.transition-label {
+  position: relative;
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100% - 2rem);
+  padding: 0 1rem;
+  text-align: center;
+  color: black;
+  opacity: 1;
+  filter: none;
+  animation: none;
+  font-family: var(--font-heading);
+  font-size: 1rem; /* tamaño base */
+}
+
+.transition-label::before,
+.transition-label::after {
+  content: "";
+  display: inline-block;
+  width: clamp(2rem, 8vw, 6rem);
+  height: 1px;
+  margin: 0 1.2rem 0.22rem;
+  background: currentColor;
+  opacity: 0.25;
+}
+
+/* La frase pulsa suavemente: opacidad + espaciado de letras */
+@keyframes labelPulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.68; }
+}
+
+/* ── TRANSICIÓN 1: NUBES (Olimpo → Tierra) — Delicada y Etérea ── */
+/*
+   Suave fusión de colores sin cambios abruptos.
+   Las nubes flotan delicadamente entre dos mundos.
+*/
+#transition-clouds {
+  background: linear-gradient(180deg,
+    #c8e8f8 0%,
+    #dcecf5 18%,
+    #eef1ed 34%,
+    #eadfc8 54%,
+    #d9c19a 76%,
+    #c8a878 100%
+  );
+}
+
+#transition-clouds::before {
+  background: linear-gradient(to bottom, #ffe8a0 0%, rgba(255,232,160,0) 100%);
+}
+#transition-clouds::after {
+  background: linear-gradient(to top, #d4a870 0%, rgba(212,168,112,0) 100%);
+}
+
+.trans-cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.52);
+  filter: blur(34px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.tc1 { width: 520px; height: 150px; top:  7%;  left:  -4%;  opacity: 0.48; animation: cloudDriftSlow 22s ease-in-out infinite; }
+.tc2 { width: 360px; height: 110px; top: 24%;  right: 1%;   opacity: 0.34; animation: cloudDriftSlow 26s ease-in-out infinite reverse 2s; }
+.tc3 { width: 620px; height: 160px; top: 42%;  left:  6%;   opacity: 0.42; animation: cloudDriftSlow 24s ease-in-out infinite 1s; }
+.tc4 { width: 420px; height: 120px; top: 61%;  right: 8%;   opacity: 0.28; animation: cloudDriftSlow 28s ease-in-out infinite reverse 3s; }
+.tc5 { width: 320px; height: 90px;  top: 76%;  left: 18%;   opacity: 0.24; animation: cloudDriftSlow 20s ease-in-out infinite 4s; }
+
+@keyframes cloudDriftSlow {
+  0%, 100% { transform: translateX(0px)   translateY(0px); }
+  25%       { transform: translateX(20px)  translateY(-6px); }
+  50%       { transform: translateX(8px)   translateY(4px); }
+  75%       { transform: translateX(-12px) translateY(-3px); }
+}
+
+/* ── TRANSICIÓN 2: AGUA (Tierra → Mar) — Fluidez Delicada ── */
+/*
+   Gradiente suave y orgánico del hundimiento en el agua.
+   Los tonos avanzan sin saltos bruscos.
+*/
+#transition-water {
+  background: linear-gradient(180deg,
+    #6a4820 0%,
+    #8a6842 13%,
+    #7d8a72 26%,
+    #4f8f97 40%,
+    #1f7f95 56%,
+    #0a5878 74%,
+    #032030 100%
+  );
+  overflow: hidden;
+}
+
+#transition-water::before {
+  background: linear-gradient(to bottom, #6a4820 0%, rgba(106,72,32,0) 100%);
+}
+#transition-water::after {
+  background: linear-gradient(to top, #0a2840 0%, rgba(10,40,64,0) 100%);
+}
+
+.wave-layer {
+  position: absolute;
+  width: 250%;
+  left: -75%;
+  border-radius: 44%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.wl1 {
+  height: 105px;
+  top: 16%;
+  background: linear-gradient(180deg, rgba(220,190,135,0.12) 0%, rgba(90,150,160,0.22) 100%);
+  animation: waveMorphSlow 14s ease-in-out infinite;
+}
+.wl2 {
+  height: 110px;
+  top: 34%;
+  background: linear-gradient(180deg, rgba(80,160,175,0.18) 0%, rgba(20,110,145,0.28) 100%);
+  animation: waveMorphSlow 16s ease-in-out infinite reverse 1s;
+}
+.wl3 {
+  height: 125px;
+  top: 53%;
+  background: linear-gradient(180deg, rgba(25,105,145,0.2) 0%, rgba(10,80,120,0.32) 100%);
+  animation: waveMorphSlow 15s ease-in-out infinite 2s;
+}
+.wl4 {
+  height: 135px;
+  top: 70%;
+  background: linear-gradient(180deg, rgba(10,80,120,0.22) 0%, rgba(8,48,80,0.34) 100%);
+  animation: waveMorphSlow 18s ease-in-out infinite reverse 0.5s;
+}
+
+@keyframes waveMorphSlow {
+  0%   { transform: rotate(2deg)  translateX(-1.5%) scaleY(1);    }
+  25%  { transform: rotate(-1deg) translateX(1%)    scaleY(1.04); }
+  50%  { transform: rotate(2.5deg) translateX(2%)   scaleY(0.98); }
+  75%  { transform: rotate(-1.5deg) translateX(-1.5%) scaleY(1.02); }
+  100% { transform: rotate(2deg)  translateX(-1.5%) scaleY(1);    }
+}
+
+.wave-bubbles { position: absolute; inset: 0; pointer-events: none; }
+
+#transition-water .water-sheen {
+  position: absolute;
+  top: 25%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(190,225,235,0.22) 35%,
+    rgba(255,255,255,0.34) 50%,
+    rgba(190,225,235,0.22) 65%,
+    transparent 100%
+  );
+  filter: blur(2px);
+  animation: sheenSlide 6s ease-in-out infinite;
+}
+
+@keyframes sheenSlide {
+  0%, 100% { opacity: 0.3; transform: scaleX(0.7) translateX(-8%); }
+  50%       { opacity: 0.6; transform: scaleX(1) translateX(2%); }
+}
+
+/* ── TRANSICIÓN 3: TIERRA / GRIETAS (Mar → Inframundo) — Ardiente y Sutil ── */
+/*
+   Transición delicada pero evocadora hacia el Tártaro.
+   El calor interno emerge de forma orgánica sin ser dramático.
+*/
+#transition-earth {
+  background: linear-gradient(180deg,
+    #021018 0%,
+    #05151d 18%,
+    #081012 34%,
+    #120b08 52%,
+    #1a0a06 68%,
+    #100708 84%,
+    #0a0508 100%
+  );
+  overflow: hidden;
+}
+
+#transition-earth::before {
+  background: linear-gradient(to bottom, #021018 0%, rgba(2,16,24,0) 100%);
+}
+#transition-earth::after {
+  background: linear-gradient(to top, #0a0508 0%, rgba(10,5,8,0) 100%);
+}
+
+#transition-earth .ember-glow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 26%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(180,50,10,0.18) 30%,
+    rgba(255,120,40,0.2) 50%,
+    rgba(180,50,10,0.18) 70%,
+    transparent 100%
+  );
+  filter: blur(4px);
+  animation: emberPulse 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes emberPulse {
+  0%, 100% { opacity: 0.35; transform: scaleX(0.9); }
+  50%       { opacity: 0.7;  transform: scaleX(1); }
+}
+
+/* Grietas en la tierra */
+.earth-crack {
+  position: absolute;
+  background: linear-gradient(to bottom, rgba(255,120,40,0.22), rgba(200,50,10,0.14));
+  filter: blur(2px);
+  transform-origin: top center;
+  animation: crackGlow 5s ease-in-out infinite;
+}
+
+.ec1 {
+  width: 4px;
+  height: 75%;
+  left: 28%;
+  top: 12%;
+  clip-path: polygon(0 0, 100% 5%, 80% 30%, 100% 55%, 70% 75%, 100% 100%, 0 100%, 30% 75%, 0 55%, 30% 30%, 0 5%);
+  animation-delay: 0s;
+}
+.ec2 {
+  width: 4px;
+  height: 65%;
+  left: 50%;
+  top: 18%;
+  clip-path: polygon(0 0, 100% 8%, 70% 35%, 100% 60%, 60% 80%, 100% 100%, 0 100%, 40% 80%, 0 60%, 30% 35%, 0 8%);
+  animation-delay: 0.7s;
+}
+.ec3 {
+  width: 3px;
+  height: 55%;
+  left: 70%;
+  top: 22%;
+  clip-path: polygon(0 0, 100% 6%, 80% 32%, 100% 58%, 75% 78%, 100% 100%, 0 100%, 25% 78%, 0 58%, 20% 32%, 0 6%);
+  animation-delay: 1.4s;
+}
+
+/* Llamas que emergen de las grietas */
+.flame {
+  position: absolute;
+  border-radius: 50% 50% 30% 30%;
+  background: linear-gradient(to top,
+    rgba(200,50,5,0.28),
+    rgba(255,120,10,0.18),
+    rgba(255,190,40,0.08),
+    transparent
+  );
+  filter: blur(7px);
+  will-change: transform;
+  animation: flameFlicker var(--fdur, 2.8s) ease-in-out infinite alternate;
+}
+
+.fl1 { width: 35px;  height: 70px;  left: 26%;  bottom: 22%; --fdur: 1.2s; animation-delay: 0s; }
+.fl2 { width: 22px;  height: 50px;  left: 46%;  bottom: 15%; --fdur: 1.6s; animation-delay: 0.4s; }
+.fl3 { width: 48px;  height: 95px;  left: 66%;  bottom: 8%;  --fdur: 1s;   animation-delay: 0.7s; }
+.fl4 { width: 18px;  height: 40px;  left: 36%;  bottom: 28%; --fdur: 1.9s; animation-delay: 0.2s; }
+.fl5 { width: 28px;  height: 62px;  left: 56%;  bottom: 18%; --fdur: 1.4s; animation-delay: 0.9s; }
+
+
+/* ----------------------------------------------------------------
+   SLIDER DE TARJETAS
+   .cards-slider: contenedor con overflow hidden
+   .cards-track: banda que se desplaza con translateX
+   .cards-page: cada grupo de 3 tarjetas (ancho 100% del slider)
+   .slider-arrow: flechas fantasma, solo visibles al acercar el ratón
+   .slider-dots: indicadores de página
+---------------------------------------------------------------- */
+
+/* Contenedor externo: relativo para posicionar flechas y puntos */
+.cards-slider {
+  position: relative;
+  width: 100%;
+  /* Área de activación de flechas laterales: padding horizontal */
+}
+
+/* Ventana: oculta las páginas que no están activas */
+.cards-track-window {
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Banda deslizante: contiene todas las páginas en fila */
+.cards-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+/* Cada página ocupa exactamente el 100% del ancho de la ventana */
+.cards-page {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  text-align: left;
+}
+
+/* ── Flechas fantasma ── */
+/*
+ * Invisibles por defecto (opacity:0, pointer-events:none).
+ * Aparecen cuando el ratón entra en las zonas laterales del slider
+ * (.cards-slider:hover .slider-prev cuando el cursor está en el tercio izq,
+ *  y .slider-next en el tercio derecho — esto se hace con pseudo-elementos
+ *  de zona en el HTML via :hover sobre los propios botones posicionados).
+ *
+ * El truco: los botones ocupan el 20% lateral del slider y tienen
+ * background transparente. Al hacer hover sobre ellos se muestran.
+ */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15%;          /* zona de activación lateral */
+  height: 80%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none; /* invisible: no intercepta clics */
+  transition: opacity 0.25s ease;
+  /* Sin padding: el símbolo se posiciona con justify-content */
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 100;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.slider-prev {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: 0.5rem;
+  /* Gradiente lateral que sugiere la flecha sin ser invasivo */
+  background: linear-gradient(to right, rgba(0,0,0,0.12), transparent);
+}
+
+.slider-next {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+  background: linear-gradient(to left, rgba(0,0,0,0.12), transparent);
+}
+
+/* Mostrar flecha al hacer hover directamente sobre la zona lateral */
+.slider-prev:hover,
+.slider-next:hover {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Mostrar flecha cuando el ratón está sobre el slider y cerca del borde.
+   Se activa vía JS añadiendo .show-prev / .show-next al slider */
+.cards-slider.show-prev .slider-prev,
+.cards-slider.show-next .slider-next {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Deshabilitar flechas en el primer/último slide */
+.slider-arrow:disabled {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* ── Puntos indicadores ── */
+.slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.8rem;
+}
+
+.slider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.25;
+  transition: opacity 0.3s, transform 0.3s;
+  cursor: pointer; /* clickables via JS */
+}
+
+.slider-dot.active {
+  opacity: 0.85;
+  transform: scale(1.35);
+}
+
+/* ── Responsive: en móvil flechas siempre visibles ── */
+@media (max-width: 768px) {
+  .slider-arrow {
+    opacity: 0.55;
+    pointer-events: auto;
+    width: 12%;
+    font-size: 1.8rem;
+  }
+}
+
+/* ----------------------------------------------------------------
+   TARJETAS DE INFORMACIÓN (info-cards)
+   Se usan en las 4 secciones con estilos específicos por sección
+---------------------------------------------------------------- */
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.info-card {
+  padding: 1.8rem;
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s var(--ease-smooth), box-shadow 0.3s;
+  /* Valor de opacidad para animación de entrada */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* La tarjeta featured tiene más énfasis visual */
+.info-card.featured {
+  border-color: currentColor;
+  background: rgba(255,255,255,0.06);
+}
+
+.info-card:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+.card-icon {
+  display: block;
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.info-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.info-card p {
+  font-size: 1rem;
+  line-height: 1.75;
+  opacity: 0.85;
+  text-align: center;
+}
+
+/* Colores específicos por sección */
+.olympus-section .info-card    { background: rgba(255,255,255,0.25); color: var(--olympus-deep); }
+.olympus-section .info-card:hover { box-shadow: 0 12px 40px rgba(42,95,143,0.2); }
+.olympus-section .info-card.featured { border-color: var(--olympus-deep); }
+
+.earth-section .info-card    { background: rgba(0,0,0,0.25); color: var(--earth-sand); }
+.earth-section .info-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+.earth-section .info-card.featured { border-color: var(--earth-sand); }
+
+.sea-section .info-card    { background: rgba(0,50,80,0.4); color: var(--sea-foam); }
+.sea-section .info-card:hover { box-shadow: 0 12px 40px rgba(0,100,150,0.3); }
+.sea-section .info-card.featured { border-color: var(--sea-foam); }
+
+.underworld-section .info-card    { background: rgba(80,24,16,0.28); color: rgba(255,226,190,0.96); }
+.underworld-section .info-card:hover { box-shadow: 0 12px 40px rgba(255,112,46,0.24); }
+.underworld-section .info-card.featured { border-color: #ff9a58; }
+
+.underworld-section .info-card p {
+  opacity: 0.94;
+}
+
+.underworld-section .footer-text {
+  color: rgba(255, 218, 176, 0.78);
+}
+
+.underworld-section .footer-sub {
+  color: rgba(255, 154, 88, 0.72);
+}
+
+/* ----------------------------------------------------------------
+   PIE DE PÁGINA
+---------------------------------------------------------------- */
+.myth-footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 5rem 2rem 4rem;
+  margin-top: 4rem;
+  border-top: 1px solid rgba(200,48,16,0.2);
+}
+
+.footer-ornament {
+  font-size: 1.5rem;
+  letter-spacing: 1rem;
+  margin-bottom: 2rem;
+  opacity: 0.5;
+}
+
+.footer-text {
+  font-size: 1.2rem;
+  font-style: italic;
+  line-height: 2;
+  color: rgba(240,200,160,0.6);
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+}
+
+.footer-sub {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(200,48,16,0.5);
+}
+
+/* ----------------------------------------------------------------
+   KEYFRAMES — todas las animaciones
+---------------------------------------------------------------- */
+
+/* ────────────────────────────────────────────────────────────── */
+/* ANIMACIONES PRINCIPALES */
+/* ────────────────────────────────────────────────────────────── */
+
+/* Transición suave de entrada para secciones */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aparición suave desde abajo */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Flotación suave de figuras mitológicas */
+@keyframes floatFigure {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-14px) rotate(0.5deg); }
+  66%       { transform: translateY(-8px) rotate(-0.5deg); }
+}
+
+/* Respiración (escala ligera) */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.025); }
+}
+
+/* Nubes decorativas del Olimpo */
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0px); }
+  50%       { transform: translateX(40px); }
+}
+
+/* Rotación muy lenta de los rayos de luz */
+@keyframes rayRotate {
+  from { transform: translateX(-50%) rotate(0deg); }
+  to   { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* Plantas marinas meciendo */
+@keyframes plantSway {
+  0%, 100% { transform: rotate(-8deg); }
+  50%       { transform: rotate(8deg); }
+}
+
+/* Burbujas submarinas subiendo */
+@keyframes bubbleRise {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+}
+
+/* Grietas pulsando con luz infernal */
+@keyframes crackGlow {
+  0%, 100% { opacity: 0.4; filter: blur(2px); }
+  50%       { opacity: 1;   filter: blur(1px) drop-shadow(0 0 6px rgba(255,80,0,0.8)); }
+}
+
+/* Llamas parpadeando */
+@keyframes flameFlicker {
+  0%   { transform: scaleX(1) scaleY(1) skewX(0deg); }
+  33%  { transform: scaleX(1.1) scaleY(1.05) skewX(3deg); }
+  66%  { transform: scaleX(0.9) scaleY(1.08) skewX(-2deg); }
+  100% { transform: scaleX(1.05) scaleY(0.95) skewX(1deg); }
+}
+
+/* Cenizas cayendo */
+@keyframes ashFall {
+  0%   { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(110vh) translateX(30px) rotate(180deg); opacity: 0; }
+}
+
+/* Flujo del río Estigia */
+@keyframes riverFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ----------------------------------------------------------------
+   ANIMACIÓN DE ENTRADA DE TARJETAS (clase añadida por JS con IntersectionObserver)
+---------------------------------------------------------------- */
+.info-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
+}
+
+/* Delay escalonado para cada tarjeta */
+.info-card:nth-child(1) { transition-delay: 0.1s; }
+.info-card:nth-child(2) { transition-delay: 0.25s; }
+.info-card:nth-child(3) { transition-delay: 0.4s; }
+
+/* ----------------------------------------------------------------
+   RESPONSIVE — adaptación a pantallas pequeñas
+---------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .nav-links { display: none; }  /* Ocultar nav en móvil */
+
+  .hero-title { font-size: clamp(3rem, 18vw, 6rem); }
+
+  .info-cards {
+    grid-template-columns: 1fr;  /* Una columna en móvil */
+  }
+
+  .column { display: none; }     /* Sin columnas decorativas en móvil */
+
+  .section-title { font-size: clamp(1.8rem, 6vw, 3rem); }
+
+  /* Transiciones más compactas en móvil */
+  .transition-zone { height: 260px; }
+}
+
+@media (max-width: 480px) {
+  .world-section { padding: 5vh 4vw; }
+  .myth-footer   { padding: 3rem 1.5rem 3rem; }
+}
+
+
+/* ----------------------------------------------------------------
+   MEJORAS 2026 — accesibilidad, navegación móvil y rendimiento
+---------------------------------------------------------------- */
+body.nav-open {
+  overflow: hidden;
+}
+
+main {
+  display: block;
+}
+
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2000;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  background: rgba(10, 5, 2, 0.96);
+  color: #fff8d0;
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform 0.25s ease;
+  border: 1px solid rgba(232, 200, 74, 0.5);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.nav-logo {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-toggle {
+  display: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 200, 74, 0.3);
+  background: rgba(10, 5, 2, 0.4);
+  backdrop-filter: blur(10px);
+  padding: 0;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 1.1rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--olympus-gold);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+body.nav-open .nav-toggle span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+body.nav-open .nav-toggle span:nth-child(2) {
+  opacity: 0;
+}
+
+body.nav-open .nav-toggle span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.nav-links a {
+  position: relative;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.45rem;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after,
+.nav-links a.active::after {
+  transform: scaleX(1);
+}
+
+.nav-links a.active,
+.nav-links a[aria-current="page"] {
+  color: var(--olympus-gold);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid rgba(255, 248, 208, 0.9);
+  outline-offset: 4px;
+}
+
+.hero-cta,
+#back-to-top {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.figure-shell {
+  margin: 0 auto 3rem;
+  will-change: transform;
+}
+
+.figure-shell .mythic-figure,
+.figure-shell .battle-scene,
+.figure-shell .sea-figures,
+.figure-shell .cerberus-figure {
+  margin-bottom: 0;
+}
+
+.section-inner {
+  transform-origin: center center;
+  /* ═══════════════════════════════════════════════════════
+     CRUCIAL: Sin transición para que el efecto 3D sea INMEDIATO
+     Las transformaciones se aplican instantáneamente con cada frame
+     ═══════════════════════════════════════════════════════ */
+  transition: none !important;
+}
+
+#back-to-top {
+  position: fixed;
+  z-index: 999;
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  font-family: var(--font-heading);
+  letter-spacing: 0.14em;
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+#back-to-top {
+  right: 2rem;
+  bottom: 2rem;
+  padding: 0.85rem 1.35rem;
+  background: rgba(10, 5, 2, 0.85);
+  border: 1px solid rgba(200, 48, 16, 0.45);
+  color: rgba(240, 200, 160, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+}
+
+#back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+#back-to-top:hover,
+#back-to-top:focus-visible {
+  background: rgba(200, 48, 16, 0.16);
+  border-color: rgba(200, 48, 16, 0.85);
+}
+
+/* ── Botón de audio: vive dentro del nav ── */
+#ambient-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 200, 74, 0.35);
+  background: transparent;
+  color: rgba(240, 232, 208, 0.7);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.ambient-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+#ambient-btn:hover,
+#ambient-btn:focus-visible {
+  color: var(--olympus-gold);
+  border-color: rgba(232, 200, 74, 0.7);
+  background: rgba(232, 200, 74, 0.06);
+}
+
+#ambient-btn.is-active {
+  color: var(--olympus-gold);
+  border-color: rgba(232, 200, 74, 0.6);
+}
+
+#ambient-btn.is-active .ambient-icon {
+  /* Pulso sutil cuando el audio está activo */
+  animation: audioPulse 2s ease-in-out infinite;
+}
+
+@keyframes audioPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+/* ----------------------------------------------------------------
+   TRANSICIONES 3D DE DESCENSO ENTRE MUNDOS
+---------------------------------------------------------------- */
+.hero-intro,
+.world-section,
+.transition-zone {
+  perspective: 950px;
+  perspective-origin: 50% 45%;
+  transform-style: preserve-3d;
+}
+
+.hero-content,
+#stars-container,
+.column,
+.section-inner,
+.section-badge,
+.section-title,
+.cards-slider,
+.info-card,
+.parthenon-bg,
+.sky-clouds,
+#sea-particles,
+#ash-particles,
+.seabed,
+.styx-river,
+.transition-label {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.hero-content,
+#stars-container,
+.section-inner,
+.cards-slider,
+.transition-label,
+.cloud-curtain,
+.water-curtain,
+.underworld-gate,
+.breaker-foam,
+.soul-mist,
+.gate-star {
+  will-change: transform, opacity;
+}
+
+.hero-intro {
+  --hero-text-y: 0px;
+  --hero-text-z: 0px;
+  --hero-text-scale: 1;
+  --hero-text-tilt: 0deg;
+  --hero-text-opacity: 1;
+  --hero-stars-y: 0px;
+  --hero-stars-z: 0px;
+  --hero-stars-scale: 1;
+  --hero-stars-opacity: 1;
+  --hero-column-y: 0px;
+  --hero-column-z: 0px;
+  --hero-column-scale: 1;
+  --hero-left-x: 0px;
+  --hero-right-x: 0px;
+  --hero-left-rot: 0deg;
+  --hero-right-rot: 0deg;
+  --hero-glow-y: 0px;
+  --hero-glow-blur: 0px;
+  --hero-glow-alpha: 0;
+  --hero-bottom-fade-opacity: 0;
+}
+
+.hero-content {
+  transform:
+    translate3d(0, var(--hero-text-y), var(--hero-text-z))
+    rotateX(var(--hero-text-tilt))
+    scale(var(--hero-text-scale));
+  opacity: var(--hero-text-opacity);
+  filter: drop-shadow(0 var(--hero-glow-y) var(--hero-glow-blur) rgba(232, 200, 74, var(--hero-glow-alpha)));
+}
+
+#stars-container {
+  transform:
+    translate3d(0, var(--hero-stars-y), var(--hero-stars-z))
+    scale(var(--hero-stars-scale));
+  opacity: var(--hero-stars-opacity);
+}
+
+.left-col {
+  transform:
+    translate3d(var(--hero-left-x), var(--hero-column-y), var(--hero-column-z))
+    rotateY(var(--hero-left-rot))
+    scale(var(--hero-column-scale));
+}
+
+.right-col {
+  transform:
+    translate3d(var(--hero-right-x), var(--hero-column-y), var(--hero-column-z))
+    rotateY(var(--hero-right-rot))
+    scale(var(--hero-column-scale));
+}
+
+.world-section {
+  --badge-y: 0px;
+  --badge-z: 0px;
+  --badge-scale: 1;
+  --title-y: 0px;
+  --title-z: 0px;
+  --title-scale: 1;
+  --cards-y: 0px;
+  --cards-z: 0px;
+  --cards-scale: 1;
+  --cards-tilt: 0deg;
+}
+
+.section-badge {
+  transform:
+    translate3d(0, var(--badge-y), var(--badge-z))
+    scale(var(--badge-scale));
+}
+
+.section-title {
+  transform:
+    translate3d(0, var(--title-y), var(--title-z))
+    scale(var(--title-scale));
+}
+
+.cards-slider {
+  transform:
+    translate3d(0, var(--cards-y), var(--cards-z))
+    rotateX(var(--cards-tilt))
+    scale(var(--cards-scale));
+  transform-origin: center top;
+}
+
+.info-card.visible {
+  transform:
+    translate3d(0, var(--card-visible-y, 0px), var(--card-z, 0px))
+    rotateX(var(--card-tilt, 0deg))
+    scale(var(--card-scale, 1));
+}
+
+.info-card:hover {
+  transform:
+    translate3d(0, calc(var(--card-visible-y, 0px) - 6px), calc(var(--card-z, 0px) + 36px))
+    rotateX(var(--card-tilt, 0deg))
+    scale(1.02);
+}
+
+.transition-zone {
+  --transition-y: 0px;
+  --transition-z: 0px;
+  --transition-label-y: 0px;
+  --transition-label-z: 0px;
+  --transition-label-scale: 1;
+  --curtain-left-x: 0vw;
+  --curtain-right-x: 0vw;
+  --curtain-z: 0px;
+  --curtain-left-rot: 0deg;
+  --curtain-right-rot: 0deg;
+  --gate-fall-y: 0px;
+  --gate-z: 0px;
+  --gate-star-scale: 1;
+  --gate-star-opacity: 0.85;
+  --underworld-veil-opacity: 0.38;
+  --underworld-veil-scale: 1;
+  --foam-y: 0px;
+  --foam-z: 0px;
+  --foam-opacity: 0.45;
+  --foam-soft-opacity: 0.32;
+}
+
+.transition-label {
+  transform:
+    translate3d(0, var(--transition-label-y), var(--transition-label-z))
+    scale(var(--transition-label-scale));
+}
+
+#transition-olympus {
+  height: 320px;
+  min-height: 280px;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(255,248,215,0.18) 0%, rgba(255,248,215,0) 38%),
+    radial-gradient(ellipse at 50% 86%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 52%),
+    linear-gradient(180deg,
+      #050810 0%,
+      #07142a 16%,
+      #183f68 48%,
+      #79bce5 78%,
+      #87c4f0 100%
+    );
+}
+
+#transition-olympus::before {
+  height: 90px;
+  background: linear-gradient(to bottom, #050810 0%, rgba(5,8,16,0) 100%);
+}
+
+#transition-olympus::after {
+  height: 100px;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(to top, #87c4f0 0%, rgba(135,196,240,0) 100%);
+}
+
+.gate-star {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 248, 215, 0.95);
+  box-shadow:
+    0 0 16px rgba(255, 248, 215, 0.8),
+    0 0 42px rgba(232, 200, 74, 0.36);
+  opacity: var(--gate-star-opacity);
+  transform:
+    translate3d(0, var(--gate-fall-y), var(--gate-z))
+    scale(var(--gate-star-scale));
+  pointer-events: none;
+  z-index: 3;
+  animation: gateStarPulse 4s ease-in-out infinite;
+}
+
+.gs1 { top: 13%; left: 12%; animation-delay: 0s; }
+.gs2 { top: 21%; right: 18%; width: 5px; height: 5px; animation-delay: 0.6s; }
+.gs3 { top: 48%; left: 22%; width: 11px; height: 11px; animation-delay: 1.1s; }
+.gs4 { top: 58%; right: 23%; width: 7px; height: 7px; animation-delay: 1.7s; }
+.gs5 { top: 72%; left: 45%; width: 5px; height: 5px; animation-delay: 2.3s; }
+.gs6 { top: 31%; left: 62%; width: 9px; height: 9px; animation-delay: 3s; }
+
+@keyframes gateStarPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255,248,215,0.55), 0 0 34px rgba(232,200,74,0.24); }
+  50%      { box-shadow: 0 0 22px rgba(255,248,215,0.9),  0 0 58px rgba(232,200,74,0.5); }
+}
+
+.cloud-curtain,
+.water-curtain,
+.underworld-gate,
+.breaker-foam,
+.soul-mist {
+  position: absolute;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.cloud-curtain {
+  top: -20%;
+  bottom: -20%;
+  width: 58vw;
+  z-index: 4;
+  opacity: 0.78;
+  filter: blur(14px);
+  background:
+    radial-gradient(circle at 38% 20%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 30%),
+    radial-gradient(circle at 65% 44%, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0) 34%),
+    radial-gradient(circle at 48% 74%, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0) 38%);
+}
+
+.cloud-curtain-left {
+  left: -8vw;
+  transform:
+    translate3d(var(--curtain-left-x), var(--transition-y), var(--curtain-z))
+    rotateY(var(--curtain-left-rot));
+}
+
+.cloud-curtain-right {
+  right: -8vw;
+  transform:
+    translate3d(var(--curtain-right-x), var(--transition-y), var(--curtain-z))
+    rotateY(var(--curtain-right-rot));
+}
+
+.water-curtain {
+  top: -24%;
+  bottom: -24%;
+  width: 56vw;
+  z-index: 5;
+  opacity: 0.68;
+  filter: blur(10px);
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(215,250,255,0.46) 0%, rgba(215,250,255,0) 28%),
+    repeating-linear-gradient(
+      115deg,
+      rgba(135,225,235,0.26) 0px,
+      rgba(135,225,235,0.08) 22px,
+      rgba(20,105,150,0.18) 44px
+    );
+}
+
+.water-curtain-left {
+  left: -6vw;
+  transform:
+    translate3d(var(--curtain-left-x), var(--transition-y), var(--curtain-z))
+    rotateY(var(--curtain-left-rot));
+}
+
+.water-curtain-right {
+  right: -6vw;
+  transform:
+    translate3d(var(--curtain-right-x), var(--transition-y), var(--curtain-z))
+    rotateY(var(--curtain-right-rot));
+}
+
+.breaker-foam {
+  left: -12%;
+  width: 124%;
+  height: 92px;
+  z-index: 6;
+  opacity: var(--foam-opacity);
+  filter: blur(3px);
+  background:
+    radial-gradient(ellipse at 10% 45%, rgba(255,255,255,0.74) 0%, rgba(255,255,255,0) 18%),
+    radial-gradient(ellipse at 30% 55%, rgba(220,250,255,0.58) 0%, rgba(220,250,255,0) 20%),
+    radial-gradient(ellipse at 55% 40%, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0) 22%),
+    radial-gradient(ellipse at 82% 56%, rgba(220,250,255,0.5) 0%, rgba(220,250,255,0) 18%);
+  transform: translate3d(0, var(--foam-y), var(--foam-z));
+  animation: foamBreak 5s ease-in-out infinite;
+}
+
+.bf1 { top: 24%; }
+.bf2 { top: 47%; opacity: var(--foam-soft-opacity); animation-delay: 1.4s; }
+
+@keyframes foamBreak {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 8% 52%; }
+}
+
+.underworld-gate {
+  top: -16%;
+  bottom: -22%;
+  width: 52vw;
+  z-index: 5;
+  opacity: 0.86;
+  filter: blur(2px) drop-shadow(0 0 34px rgba(200,48,16,0.18));
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.92), rgba(18,7,8,0.7), rgba(100,22,8,0.1)),
+    repeating-linear-gradient(
+      100deg,
+      rgba(255,90,24,0.06) 0px,
+      rgba(255,90,24,0.02) 22px,
+      rgba(0,0,0,0.18) 44px
+    );
+}
+
+.underworld-gate-left {
+  left: -3vw;
+  transform:
+    translate3d(var(--curtain-left-x), var(--transition-y), var(--curtain-z))
+    rotateY(var(--curtain-left-rot));
+  transform-origin: left center;
+}
+
+.underworld-gate-right {
+  right: -3vw;
+  transform:
+    translate3d(var(--curtain-right-x), var(--transition-y), var(--curtain-z))
+    rotateY(var(--curtain-right-rot));
+  transform-origin: right center;
+}
+
+#transition-earth .underworld-gate {
+  left: -8%;
+  right: auto;
+  top: -18%;
+  bottom: -24%;
+  width: 116%;
+  z-index: 3;
+  opacity: var(--underworld-veil-opacity);
+  filter: blur(9px) drop-shadow(0 0 28px rgba(200,48,16,0.14));
+  background:
+    radial-gradient(ellipse at 50% 52%, rgba(255,92,28,0.12) 0%, rgba(255,92,28,0) 42%),
+    linear-gradient(180deg,
+      rgba(0,0,0,0.72) 0%,
+      rgba(12,6,8,0.58) 32%,
+      rgba(20,7,6,0.46) 58%,
+      rgba(0,0,0,0.68) 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,90,24,0.05) 0px,
+      rgba(255,90,24,0.015) 26px,
+      rgba(0,0,0,0.16) 52px
+    );
+  transform:
+    translate3d(0, var(--transition-y), var(--curtain-z))
+    scaleY(var(--underworld-veil-scale));
+  transform-origin: center center;
+}
+
+#transition-earth .underworld-gate-left {
+  display: none;
+}
+
+#transition-earth .underworld-gate-right {
+  transform:
+    translate3d(0, var(--transition-y), var(--curtain-z))
+    scaleY(var(--underworld-veil-scale));
+  transform-origin: center center;
+}
+
+.soul-mist {
+  width: 42vw;
+  height: 130px;
+  border-radius: 50%;
+  z-index: 4;
+  opacity: 0.32;
+  filter: blur(16px);
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(190,210,210,0.22) 0%, rgba(190,210,210,0) 62%),
+    radial-gradient(ellipse at 35% 40%, rgba(255,90,24,0.2) 0%, rgba(255,90,24,0) 48%);
+  transform: translate3d(0, var(--transition-y), var(--transition-z));
+  animation: soulDrift 8s ease-in-out infinite;
+}
+
+.sm1 { left: 3%; top: 18%; }
+.sm2 { right: 2%; top: 42%; animation-delay: 1.6s; }
+.sm3 { left: 32%; top: 62%; animation-delay: 3.2s; }
+
+@keyframes soulDrift {
+  0%, 100% { opacity: 0.2; }
+  50%      { opacity: 0.42; }
+}
+
+@media (max-width: 768px) {
+  #transition-olympus {
+    height: 240px;
+    min-height: 220px;
+  }
+
+  .cloud-curtain,
+  .water-curtain,
+  .underworld-gate {
+    width: 70vw;
+  }
+}
+
+@media (max-width: 768px) {
+  #main-nav {
+    padding: 0.75rem 1rem;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    left: 1rem;
+    right: 1rem;
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 1.25rem;
+    background: rgba(10, 5, 2, 0.94);
+    border: 1px solid rgba(232, 200, 74, 0.22);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  }
+
+  body.nav-open .nav-links {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 0.8rem 0.25rem;
+  }
+
+  .hero-content {
+    padding: 2rem 1.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .hero-cta {
+    padding: 0.9rem 1.5rem;
+    letter-spacing: 0.18em;
+  }
+
+  #back-to-top {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  /* En móvil el botón de audio está en el nav: ocultar el label de texto */
+  .ambient-label {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  #back-to-top {
+    font-size: 0.65rem;
+    padding: 0.7rem 0.9rem;
+  }
+
+  .footer-text {
+    line-height: 1.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .star,
+  .sea-particle,
+  .ash-particle,
+  .cloud,
+  .trans-cloud,
+  .god-rays,
+  .wave-layer,
+  .water-sheen,
+  .seaplant,
+  .coral,
+  .styx-river,
+  .earth-crack,
+  .flame,
+  .gate-star,
+  .breaker-foam,
+  .soul-mist {
+    animation: none !important;
+  }
+
+  .hero-content,
+  #stars-container,
+  .column,
+  .section-inner,
+  .section-badge,
+  .section-title,
+  .cards-slider,
+  .info-card,
+  .transition-label,
+  .cloud-curtain,
+  .water-curtain,
+  .underworld-gate,
+  .gate-star,
+  .breaker-foam,
+  .soul-mist {
+    transform: none !important;
+    filter: none !important;
+  }
+}
