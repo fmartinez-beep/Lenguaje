@@ -16,7 +16,7 @@
   <meta name="theme-color" content="#0a0508"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
+<body data-backend="auto">
   <!-- Barra de progreso de scroll -->
   <div id="progress-bar" aria-hidden="true"></div>
 
@@ -550,40 +550,7 @@
             <input id="visitor-name" name="nombre" type="text" maxlength="24" placeholder="Ej. Ariadna" autocomplete="name" required/>
           </div>
 
-          <fieldset class="oracle-question">
-            <legend>1. ¿Quién gobierna los mares?</legend>
-            <label><input type="radio" name="q1" value="0" required/> Zeus</label>
-            <label><input type="radio" name="q1" value="1"/> Poseidón</label>
-            <label><input type="radio" name="q1" value="0"/> Hades</label>
-          </fieldset>
-
-          <fieldset class="oracle-question">
-            <legend>2. ¿Qué héroe venció al Minotauro?</legend>
-            <label><input type="radio" name="q2" value="1" required/> Teseo</label>
-            <label><input type="radio" name="q2" value="0"/> Orfeo</label>
-            <label><input type="radio" name="q2" value="0"/> Jasón</label>
-          </fieldset>
-
-          <fieldset class="oracle-question">
-            <legend>3. ¿Qué dios guiaba las almas al inframundo?</legend>
-            <label><input type="radio" name="q3" value="0" required/> Apolo</label>
-            <label><input type="radio" name="q3" value="1"/> Hermes</label>
-            <label><input type="radio" name="q3" value="0"/> Ares</label>
-          </fieldset>
-
-          <fieldset class="oracle-question">
-            <legend>4. ¿Cómo se llama el barquero del Estigia?</legend>
-            <label><input type="radio" name="q4" value="0" required/> Minos</label>
-            <label><input type="radio" name="q4" value="0"/> Morfeo</label>
-            <label><input type="radio" name="q4" value="1"/> Caronte</label>
-          </fieldset>
-
-          <fieldset class="oracle-question">
-            <legend>5. ¿Qué criatura nació de la sangre de Medusa?</legend>
-            <label><input type="radio" name="q5" value="1" required/> Pegaso</label>
-            <label><input type="radio" name="q5" value="0"/> Cancerbero</label>
-            <label><input type="radio" name="q5" value="0"/> Tritón</label>
-          </fieldset>
+          <div class="oracle-questions" id="oracle-questions" aria-live="polite"></div>
 
           <div class="oracle-field">
             <label for="favorite-world">Mundo favorito</label>
@@ -621,9 +588,11 @@
 
       <div class="backend-note">
         <h3>Preparación backend</h3>
+        <p class="backend-status" id="backend-status">Comprobando persistencia del Oráculo...</p>
         <p>
-          La sección ya genera un objeto con nombre, puntuación, título, mundo favorito y fecha.
-          En la carpeta <code>api/</code> tienes una propuesta PHP/MySQL lista para conectar cuando quieras activar persistencia real.
+          La sección genera un objeto con nombre, puntuación, total de preguntas, título, mundo favorito y fecha.
+          Si la web se sirve desde PHP con MySQL importado, el ranking se guarda en el backend; al abrirla como archivo local,
+          se mantiene una copia funcional con <code>localStorage</code>.
         </p>
       </div>
     </div>

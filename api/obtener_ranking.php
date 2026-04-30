@@ -6,12 +6,25 @@ header('Access-Control-Allow-Origin: *');
 
 try {
     $pdo = getConnection();
-    $stmt = $pdo->query(
-        'SELECT nombre, puntuacion, titulo, mundo, fecha
-         FROM resultados_oraculo
-         ORDER BY puntuacion DESC, fecha DESC
-         LIMIT 8'
-    );
+    try {
+        $stmt = $pdo->query(
+            'SELECT nombre, puntuacion, total, titulo, mundo, fecha
+             FROM resultados_oraculo
+             ORDER BY puntuacion DESC, fecha DESC
+             LIMIT 8'
+        );
+    } catch (PDOException $schemaError) {
+        if ($schemaError->getCode() !== '42S22') {
+            throw $schemaError;
+        }
+
+        $stmt = $pdo->query(
+            'SELECT nombre, puntuacion, 5 AS total, titulo, mundo, fecha
+             FROM resultados_oraculo
+             ORDER BY puntuacion DESC, fecha DESC
+             LIMIT 8'
+        );
+    }
 
     echo json_encode(['ok' => true, 'resultados' => $stmt->fetchAll()]);
 } catch (Throwable $e) {

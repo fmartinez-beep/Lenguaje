@@ -2417,6 +2417,11 @@ button:focus-visible {
   gap: 1rem;
 }
 
+.oracle-questions {
+  display: grid;
+  gap: 1rem;
+}
+
 .oracle-field label,
 .oracle-question legend {
   display: block;
@@ -2580,6 +2585,31 @@ button:focus-visible {
 
 .backend-note code {
   color: var(--olympus-gold);
+}
+
+.backend-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0.2rem auto 0.85rem;
+  border: 1px solid rgba(255, 248, 208, 0.18);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  color: rgba(255, 248, 208, 0.82);
+  background: rgba(255, 248, 208, 0.06);
+}
+
+.backend-status-remote {
+  border-color: rgba(89, 210, 139, 0.44);
+  color: #c9ffd9;
+  background: rgba(89, 210, 139, 0.12);
+}
+
+.backend-status-local {
+  border-color: rgba(232, 200, 74, 0.36);
+  color: #fff0a6;
+  background: rgba(232, 200, 74, 0.1);
 }
 
 .slider-counter {

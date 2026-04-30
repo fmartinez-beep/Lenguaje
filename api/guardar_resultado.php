@@ -18,13 +18,29 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
+if (!is_array($input)) {
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'error' => 'JSON inválido']);
+    exit;
+}
 
 $nombre = trim($input['nombre'] ?? '');
 $puntuacion = intval($input['puntuacion'] ?? -1);
+$total = intval($input['total'] ?? 5);
 $titulo = trim($input['titulo'] ?? '');
 $mundo = trim($input['mundo'] ?? '');
+$nombreLength = function_exists('mb_strlen') ? mb_strlen($nombre, 'UTF-8') : strlen($nombre);
 
-if ($nombre === '' || mb_strlen($nombre) > 24 || $puntuacion < 0 || $puntuacion > 5 || $titulo === '' || $mundo === '') {
+if (
+    $nombre === '' ||
+    $nombreLength > 24 ||
+    $puntuacion < 0 ||
+    $total < 1 ||
+    $total > 30 ||
+    $puntuacion > $total ||
+    $titulo === '' ||
+    $mundo === ''
+) {
     http_response_code(422);
     echo json_encode(['ok' => false, 'error' => 'Datos inválidos']);
     exit;
@@ -32,15 +48,30 @@ if ($nombre === '' || mb_strlen($nombre) > 24 || $puntuacion < 0 || $puntuacion 
 
 try {
     $pdo = getConnection();
-    $stmt = $pdo->prepare(
-        'INSERT INTO resultados_oraculo (nombre, puntuacion, titulo, mundo) VALUES (:nombre, :puntuacion, :titulo, :mundo)'
-    );
-    $stmt->execute([
+    $params = [
         ':nombre' => $nombre,
         ':puntuacion' => $puntuacion,
         ':titulo' => $titulo,
         ':mundo' => $mundo,
-    ]);
+    ];
+
+    try {
+        $stmt = $pdo->prepare(
+            'INSERT INTO resultados_oraculo (nombre, puntuacion, total, titulo, mundo)
+             VALUES (:nombre, :puntuacion, :total, :titulo, :mundo)'
+        );
+        $stmt->execute($params + [':total' => $total]);
+    } catch (PDOException $schemaError) {
+        if ($schemaError->getCode() !== '42S22') {
+            throw $schemaError;
+        }
+
+        $stmt = $pdo->prepare(
+            'INSERT INTO resultados_oraculo (nombre, puntuacion, titulo, mundo)
+             VALUES (:nombre, :puntuacion, :titulo, :mundo)'
+        );
+        $stmt->execute($params);
+    }
 
     echo json_encode(['ok' => true, 'id' => $pdo->lastInsertId()]);
 } catch (Throwable $e) {

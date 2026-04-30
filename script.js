@@ -744,14 +744,304 @@
     const scoreNumber = scoreBox?.querySelector('.oracle-score-number');
     const ranking = document.getElementById('oracle-ranking');
     const resetBtn = document.getElementById('oracle-reset');
+    const questionsContainer = document.getElementById('oracle-questions');
+    const backendStatus = document.getElementById('backend-status');
 
-    if (!form || !ranking) return;
+    if (!form || !ranking || !questionsContainer) return;
 
     const STORAGE_KEY = 'mitologia-oraculo-ranking';
-    const backendEnabled = document.body.dataset.backend === 'php';
+    const SESSION_QUESTIONS_KEY = 'mitologia-oraculo-preguntas-sesion';
+    const QUESTIONS_PER_SESSION = 5;
+    const backendMode = document.body.dataset.backend || 'auto';
+    const backendEnabled = backendMode === 'php' || (backendMode === 'auto' && window.location.protocol !== 'file:');
     const endpoints = {
       save: 'api/guardar_resultado.php',
       list: 'api/obtener_ranking.php',
+    };
+    const questionPool = [
+      {
+        id: 'mares-poseidon',
+        question: '¿Quién gobierna los mares?',
+        answers: [
+          { text: 'Zeus', correct: false },
+          { text: 'Poseidón', correct: true },
+          { text: 'Hades', correct: false },
+        ],
+      },
+      {
+        id: 'minotauro-teseo',
+        question: '¿Qué héroe venció al Minotauro?',
+        answers: [
+          { text: 'Teseo', correct: true },
+          { text: 'Orfeo', correct: false },
+          { text: 'Jasón', correct: false },
+        ],
+      },
+      {
+        id: 'almas-hermes',
+        question: '¿Qué dios guiaba las almas al inframundo?',
+        answers: [
+          { text: 'Apolo', correct: false },
+          { text: 'Hermes', correct: true },
+          { text: 'Ares', correct: false },
+        ],
+      },
+      {
+        id: 'estigia-caronte',
+        question: '¿Cómo se llama el barquero del Estigia?',
+        answers: [
+          { text: 'Minos', correct: false },
+          { text: 'Morfeo', correct: false },
+          { text: 'Caronte', correct: true },
+        ],
+      },
+      {
+        id: 'medusa-pegaso',
+        question: '¿Qué criatura nació de la sangre de Medusa?',
+        answers: [
+          { text: 'Pegaso', correct: true },
+          { text: 'Cerbero', correct: false },
+          { text: 'Tritón', correct: false },
+        ],
+      },
+      {
+        id: 'rayo-zeus',
+        question: '¿Qué dios empuña el rayo?',
+        answers: [
+          { text: 'Zeus', correct: true },
+          { text: 'Hefesto', correct: false },
+          { text: 'Dioniso', correct: false },
+        ],
+      },
+      {
+        id: 'sabiduria-atenea',
+        question: '¿Quién es la diosa de la sabiduría y la estrategia?',
+        answers: [
+          { text: 'Atenea', correct: true },
+          { text: 'Hera', correct: false },
+          { text: 'Artemisa', correct: false },
+        ],
+      },
+      {
+        id: 'inframundo-hades',
+        question: '¿Qué dios reina en el inframundo?',
+        answers: [
+          { text: 'Hades', correct: true },
+          { text: 'Apolo', correct: false },
+          { text: 'Poseidón', correct: false },
+        ],
+      },
+      {
+        id: 'mensajero-hermes',
+        question: '¿Quién era el mensajero de los dioses?',
+        answers: [
+          { text: 'Hermes', correct: true },
+          { text: 'Ares', correct: false },
+          { text: 'Helios', correct: false },
+        ],
+      },
+      {
+        id: 'amor-afrodita',
+        question: '¿Qué diosa está asociada al amor y la belleza?',
+        answers: [
+          { text: 'Afrodita', correct: true },
+          { text: 'Deméter', correct: false },
+          { text: 'Hécate', correct: false },
+        ],
+      },
+      {
+        id: 'aquiles-tetis',
+        question: '¿Quién fue la madre de Aquiles?',
+        answers: [
+          { text: 'Tetis', correct: true },
+          { text: 'Medea', correct: false },
+          { text: 'Casandra', correct: false },
+        ],
+      },
+      {
+        id: 'prometeo-fuego',
+        question: '¿Qué entregó Prometeo a los humanos?',
+        answers: [
+          { text: 'El fuego', correct: true },
+          { text: 'El olivo', correct: false },
+          { text: 'El vellocino', correct: false },
+        ],
+      },
+      {
+        id: 'doce-trabajos',
+        question: '¿Qué héroe realizó los doce trabajos?',
+        answers: [
+          { text: 'Heracles', correct: true },
+          { text: 'Perseo', correct: false },
+          { text: 'Belerofonte', correct: false },
+        ],
+      },
+      {
+        id: 'manzana-discordia',
+        question: '¿Qué diosa lanzó la manzana de la discordia?',
+        answers: [
+          { text: 'Eris', correct: true },
+          { text: 'Iris', correct: false },
+          { text: 'Nike', correct: false },
+        ],
+      },
+      {
+        id: 'icaro-alas',
+        question: '¿De qué material estaban unidas las alas de Ícaro?',
+        answers: [
+          { text: 'Cera', correct: true },
+          { text: 'Bronce', correct: false },
+          { text: 'Lino', correct: false },
+        ],
+      },
+      {
+        id: 'vellocino-jason',
+        question: '¿Qué héroe buscó el vellocino de oro?',
+        answers: [
+          { text: 'Jasón', correct: true },
+          { text: 'Teseo', correct: false },
+          { text: 'Odiseo', correct: false },
+        ],
+      },
+      {
+        id: 'ciclope-polifemo',
+        question: '¿Qué cíclope fue cegado por Odiseo?',
+        answers: [
+          { text: 'Polifemo', correct: true },
+          { text: 'Argos', correct: false },
+          { text: 'Brontes', correct: false },
+        ],
+      },
+      {
+        id: 'helena-paris',
+        question: '¿Qué príncipe troyano se llevó a Helena?',
+        answers: [
+          { text: 'Paris', correct: true },
+          { text: 'Héctor', correct: false },
+          { text: 'Eneas', correct: false },
+        ],
+      },
+      {
+        id: 'pandora-caja',
+        question: '¿Quién abrió la caja que liberó los males del mundo?',
+        answers: [
+          { text: 'Pandora', correct: true },
+          { text: 'Europa', correct: false },
+          { text: 'Dánae', correct: false },
+        ],
+      },
+      {
+        id: 'orfeo-euridice',
+        question: '¿Qué músico bajó al inframundo por Eurídice?',
+        answers: [
+          { text: 'Orfeo', correct: true },
+          { text: 'Lino', correct: false },
+          { text: 'Anfión', correct: false },
+        ],
+      },
+      {
+        id: 'atenas-olivo',
+        question: '¿Qué diosa regaló el olivo a Atenas?',
+        answers: [
+          { text: 'Atenea', correct: true },
+          { text: 'Perséfone', correct: false },
+          { text: 'Hera', correct: false },
+        ],
+      },
+      {
+        id: 'caza-artemisa',
+        question: '¿Quién es la diosa de la caza?',
+        answers: [
+          { text: 'Artemisa', correct: true },
+          { text: 'Afrodita', correct: false },
+          { text: 'Hestia', correct: false },
+        ],
+      },
+      {
+        id: 'vino-dioniso',
+        question: '¿Qué dios representa el vino y el éxtasis?',
+        answers: [
+          { text: 'Dioniso', correct: true },
+          { text: 'Ares', correct: false },
+          { text: 'Hefesto', correct: false },
+        ],
+      },
+      {
+        id: 'cerbero-cabezas',
+        question: '¿Qué criatura custodiaba la entrada del inframundo?',
+        answers: [
+          { text: 'Cerbero', correct: true },
+          { text: 'La Esfinge', correct: false },
+          { text: 'La Quimera', correct: false },
+        ],
+      },
+      {
+        id: 'atlas-cielo',
+        question: '¿Qué titán sostiene la bóveda celeste?',
+        answers: [
+          { text: 'Atlas', correct: true },
+          { text: 'Cronos', correct: false },
+          { text: 'Océano', correct: false },
+        ],
+      },
+    ];
+
+    const shuffle = items => items
+      .map(item => ({ item, order: Math.random() }))
+      .sort((a, b) => a.order - b.order)
+      .map(({ item }) => item);
+
+    const getQuestionById = id => questionPool.find(question => question.id === id);
+
+    const getSessionQuestions = () => {
+      try {
+        const savedIds = JSON.parse(sessionStorage.getItem(SESSION_QUESTIONS_KEY) || '[]');
+        const savedQuestions = savedIds.map(getQuestionById).filter(Boolean);
+        if (savedQuestions.length === QUESTIONS_PER_SESSION) return savedQuestions;
+      } catch {
+        // Si sessionStorage no está disponible, se genera una selección nueva.
+      }
+
+      const selected = shuffle(questionPool).slice(0, QUESTIONS_PER_SESSION);
+      try {
+        sessionStorage.setItem(SESSION_QUESTIONS_KEY, JSON.stringify(selected.map(question => question.id)));
+      } catch {
+        // La experiencia sigue funcionando aunque no se pueda guardar la sesión.
+      }
+      return selected;
+    };
+
+    const selectedQuestions = getSessionQuestions();
+
+    const renderQuestions = questions => {
+      questionsContainer.innerHTML = '';
+      questions.forEach((question, questionIndex) => {
+        const fieldset = document.createElement('fieldset');
+        fieldset.className = 'oracle-question';
+
+        const legend = document.createElement('legend');
+        legend.textContent = `${questionIndex + 1}. ${question.question}`;
+        fieldset.appendChild(legend);
+
+        shuffle(question.answers).forEach(answer => {
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = `q${questionIndex + 1}`;
+          input.value = answer.correct ? '1' : '0';
+          input.required = true;
+          label.append(input, document.createTextNode(answer.text));
+          fieldset.appendChild(label);
+        });
+
+        questionsContainer.appendChild(fieldset);
+      });
+    };
+
+    const setBackendStatus = (message, mode = 'local') => {
+      if (!backendStatus) return;
+      backendStatus.textContent = message;
+      backendStatus.className = `backend-status backend-status-${mode}`;
     };
 
     const getLocalRanking = () => {
@@ -767,8 +1057,8 @@
     };
 
     const getTitleByScore = score => {
-      if (score === 5) return 'Elegido del Olimpo';
-      if (score === 4) return 'Héroe de los Mitos';
+      if (score === QUESTIONS_PER_SESSION) return 'Elegido del Olimpo';
+      if (score === QUESTIONS_PER_SESSION - 1) return 'Héroe de los Mitos';
       if (score >= 2) return 'Discípulo del Oráculo';
       return 'Aspirante Mortal';
     };
@@ -803,7 +1093,8 @@
       sorted.forEach(entry => {
         const item = document.createElement('li');
         const date = new Date(entry.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-        item.innerHTML = `<strong>${escapeHTML(entry.nombre)}</strong> — ${entry.puntuacion}/5 · ${escapeHTML(entry.titulo)} <small>(${escapeHTML(entry.mundo)}, ${date})</small>`;
+        const total = Number(entry.total || QUESTIONS_PER_SESSION);
+        item.innerHTML = `<strong>${escapeHTML(entry.nombre)}</strong> — ${entry.puntuacion}/${total} · ${escapeHTML(entry.titulo)} <small>(${escapeHTML(entry.mundo)}, ${date})</small>`;
         ranking.appendChild(item);
       });
     };
@@ -815,17 +1106,24 @@
     const loadRanking = async () => {
       if (backendEnabled) {
         try {
-          const response = await fetch(endpoints.list, { headers: { Accept: 'application/json' } });
+          const response = await fetch(endpoints.list, {
+            cache: 'no-store',
+            headers: { Accept: 'application/json' },
+          });
           if (response.ok) {
             const data = await response.json();
             if (Array.isArray(data.resultados)) {
+              setBackendStatus('Backend PHP/MySQL conectado. El ranking se está leyendo desde la base de datos.', 'remote');
               renderRanking(data.resultados);
               return;
             }
           }
+          throw new Error('Respuesta de backend no válida');
         } catch {
-          // Fallback local si el backend aún no está configurado.
+          setBackendStatus('Backend no disponible ahora. El Oráculo funciona con ranking local de respaldo.', 'local');
         }
+      } else {
+        setBackendStatus('Modo local activo. Al servir la web con PHP/MySQL, el ranking usará el backend automáticamente.', 'local');
       }
       renderRanking(getLocalRanking());
     };
@@ -838,13 +1136,15 @@
 
       if (!backendEnabled) return;
       try {
-        await fetch(endpoints.save, {
+        const response = await fetch(endpoints.save, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(entry),
         });
+        if (!response.ok) throw new Error('No se pudo guardar en backend');
+        setBackendStatus('Resultado guardado en PHP/MySQL y en la copia local de respaldo.', 'remote');
       } catch {
-        // El ranking local ya queda guardado.
+        setBackendStatus('No se pudo guardar en backend. El resultado queda protegido en localStorage.', 'local');
       }
     };
 
@@ -864,7 +1164,7 @@
         valid = false;
       }
 
-      for (let i = 1; i <= 5; i += 1) {
+      for (let i = 1; i <= selectedQuestions.length; i += 1) {
         const checked = form.querySelector(`input[name="q${i}"]:checked`);
         const fieldset = form.querySelector(`input[name="q${i}"]`)?.closest('fieldset');
         if (!checked) {
@@ -886,7 +1186,7 @@
 
       hint.classList.remove('is-error');
       const formData = new FormData(form);
-      const score = [1, 2, 3, 4, 5].reduce((sum, n) => sum + Number(formData.get(`q${n}`) || 0), 0);
+      const score = selectedQuestions.reduce((sum, _, index) => sum + Number(formData.get(`q${index + 1}`) || 0), 0);
       const name = String(formData.get('nombre')).trim().slice(0, 24);
       const world = String(formData.get('mundo'));
       const mythicTitle = getTitleByScore(score);
@@ -895,13 +1195,14 @@
         puntuacion: score,
         titulo: mythicTitle,
         mundo: world,
+        total: QUESTIONS_PER_SESSION,
         fecha: new Date().toISOString(),
       };
 
       title.textContent = mythicTitle;
       text.textContent = getMessage(score, mythicTitle, world);
       scoreBox.hidden = false;
-      scoreNumber.textContent = `${score}/5`;
+      scoreNumber.textContent = `${score}/${QUESTIONS_PER_SESSION}`;
       hint.textContent = 'Profecía revelada y guardada en el ranking local.';
       saveEntry(entry);
     });
@@ -918,6 +1219,7 @@
       hint.textContent = 'Ranking local limpiado. El backend, si está activo, no se modifica desde este botón.';
     });
 
+    renderQuestions(selectedQuestions);
     loadRanking();
   }
 
