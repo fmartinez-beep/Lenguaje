@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Una experiencia web inmersiva sobre mitología griega: recorrido por mundos, carruseles interactivos y Oráculo de Delfos preparado para backend."/>
+  <title>Mitología Griega — Del Olimpo al Inframundo</title>
+
+  <!-- Google Fonts: Cinzel (display épico) + Crimson Pro (cuerpo elegante) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+
+  <!-- Favicon (Omega, símbolo griego) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>Ω</text></svg>"/>
+  <meta name="theme-color" content="#0a0508"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- Barra de progreso de scroll -->
+  <div id="progress-bar" aria-hidden="true"></div>
+
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+
+  <!-- ============================================================
+       NAVEGACIÓN FIJA (aparece al hacer scroll)
+  ============================================================ -->
+  <nav id="main-nav" aria-label="Navegación principal">
+    <a class="nav-logo" href="#top" aria-label="Ir al inicio">ΜΥΘΟΛΟΓΙΑ</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links-list" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <ul class="nav-links" id="nav-links-list">
+      <li><a href="#olympus">Olimpo</a></li>
+      <li><a href="#earth">Tierra</a></li>
+      <li><a href="#sea">Mar</a></li>
+      <li><a href="#underworld">Inframundo</a></li>
+      <li><a href="#oracle">Oráculo</a></li>
+    </ul>
+    <!-- Botón de audio integrado en la navegación -->
+    <button id="ambient-btn" type="button" aria-label="Activar música ambiental" aria-pressed="false">
+      <span class="ambient-icon">♪</span>
+      <span class="ambient-label">Música</span>
+    </button>
+  </nav>
+
+  <!-- ============================================================
+       HERO / PANTALLA DE BIENVENIDA
+  ============================================================ -->
+  <header class="hero-intro" id="top">
+    <!-- Estrellas de fondo generadas por JS -->
+    <div id="stars-container"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Una travesía a través de los mundos</p>
+      <h1 class="hero-title">
+        <span class="title-line">MITOS</span>
+        <span class="title-line accent">GRIEGOS</span>
+      </h1>
+      <p class="hero-subtitle">
+        Del resplandor eterno del Monte Olimpo<br/>
+        hasta la profecía final del Oráculo
+      </p>
+      <a href="#olympus" class="hero-cta">Comenzar el viaje ↓</a>
+      <a href="#oracle" class="hero-cta hero-cta-secondary">Ir al Oráculo</a>
+    </div>
+
+    <!-- Decoración: columnas griegas esquemáticas a los lados -->
+    <div class="column left-col"></div>
+    <div class="column right-col"></div>
+  </header>
+
+  <main id="main-content">
+
+  <!-- ============================================================
+       TRANSICION 0 - FIRMAMENTO -> OLIMPO
+  ============================================================ -->
+  <div class="transition-zone depth-gate" id="transition-olympus" aria-hidden="true">
+    <div class="gate-star gs1"></div>
+    <div class="gate-star gs2"></div>
+    <div class="gate-star gs3"></div>
+    <div class="gate-star gs4"></div>
+    <div class="gate-star gs5"></div>
+    <div class="gate-star gs6"></div>
+  </div>
+
+  <!-- ============================================================
+       SECCIÓN 1 — EL OLIMPO (cielo)
+  ============================================================ -->
+  <section id="olympus" class="world-section olympus-section" data-section-id="olympus">
+
+    <!-- Capas de nubes decorativas en el fondo de la sección -->
+    <div class="sky-clouds">
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="cloud c3"></div>
+      <div class="cloud c4"></div>
+    </div>
+
+    <!-- Rayos de luz que bajan desde arriba -->
+    <div class="god-rays"></div>
+
+    <!-- Contenido principal de la sección -->
+    <div class="section-inner">
+      <div class="section-badge">I — El Olimpo</div>
+      <h2 class="section-title">La Morada de los Dioses</h2>
+
+      <div class="cards-slider" data-slider>
+        <div class="cards-track">
+          <!-- Página 1 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">⚡</span>
+              <h3>El Monte Olimpo</h3>
+              <p>A 2.917 metros de altura, los antiguos griegos creían que las nubes ocultaban la cima donde los doce dioses olímpicos residían en palacios de oro y mármol, celebrando banquetes de ambrosía e intercambiando intrigas eternas.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🪶</span>
+              <h3>Hermes, el Mensajero</h3>
+              <p>Con sandalias aladas y el caduceo en mano, Hermes era el único dios que podía cruzar libremente entre el Olimpo, la Tierra y el Hades. Dios del comercio, los viajeros y la elocuencia, guiaba también las almas de los muertos.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🐎</span>
+              <h3>Pegaso</h3>
+              <p>El caballo alado nacido de la sangre de Medusa cuando Perseo la decapitó. Su casco, al golpear el suelo, creaba fuentes sagradas. Zeus lo transformó finalmente en la constelación que lleva su nombre.</p>
+            </div>
+          </div>
+          <!-- Página 2 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">⚡</span>
+              <h3>Zeus, Padre de los Dioses</h3>
+              <p>Señor del trueno y soberano del Olimpo, Zeus mantenía el orden cósmico y distribuía el destino entre mortales e inmortales. Conocido por sus innumerables transformaciones para seducir a mortales y ninfas, dejó una descendencia semidivina que pobló los mitos.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🏹</span>
+              <h3>Artemisa y Apolo</h3>
+              <p>Los gemelos divinos nacidos de Zeus y Leto. Apolo gobernaba la luz, la música y la profecía desde Delfos; Artemisa presidía la caza, la luna y la protección de los jóvenes. Juntos representaban la dualidad del sol y la luna.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">❤️</span>
+              <h3>Afrodita y Eros</h3>
+              <p>Nacida de la espuma del mar donde cayó la sangre de Urano, Afrodita era la diosa del amor y la belleza. Su hijo Eros, armado con flechas doradas y de plomo, podía encender o apagar el amor en dioses y mortales por igual.</p>
+            </div>
+          </div>
+          <!-- Página 3 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🛡️</span>
+              <h3>Atenea, la Diosa Sabia</h3>
+              <p>Surgida completamente armada de la cabeza de Zeus, Atenea era la diosa de la sabiduría, la guerra estratégica y las artes. Patrona de Atenas, su rival con Poseidón por la ciudad se resolvió cuando su regalo —el olivo— superó al manantial salado del dios del mar.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🔥</span>
+              <h3>Hefesto, el Forjador</h3>
+              <p>El dios cojo del fuego y la forja, arrojado del Olimpo al nacer. En su taller bajo un volcán creó los palacios de los dioses, el escudo de Aquiles, la armadura de Heracles y la primera mujer mortal: Pandora, con su célebre caja de males.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🌿</span>
+              <h3>Deméter y Perséfone</h3>
+              <p>La diosa de la cosecha lloró tanto la pérdida de su hija Perséfone, raptada por el dios Hades, que el mundo se volvió estéril. El acuerdo que permitió a Perséfone pasar medio año en el Olimpo creó las estaciones: primavera cuando regresa, invierno cuando desciende.</p>
+            </div>
+          </div>
+        </div>
+        <button class="slider-arrow slider-prev" aria-label="Anterior" tabindex="-1">&#8249;</button>
+        <button class="slider-arrow slider-next" aria-label="Siguiente" tabindex="-1">&#8250;</button>
+        <div class="slider-dots" aria-label="Selector de página del carrusel">
+          <span class="slider-dot active"></span>
+          <span class="slider-dot"></span>
+          <span class="slider-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TRANSICIÓN 1 — NUBES (Olimpo → Tierra)
+  ============================================================ -->
+  <div class="transition-zone" id="transition-clouds">
+    <div class="cloud-curtain cloud-curtain-left"></div>
+    <div class="cloud-curtain cloud-curtain-right"></div>
+    <!-- Las nubes se generan dinámicamente por JS y se animan con CSS -->
+    <div class="trans-cloud tc1"></div>
+    <div class="trans-cloud tc2"></div>
+    <div class="trans-cloud tc3"></div>
+    <div class="trans-cloud tc4"></div>
+    <div class="trans-cloud tc5"></div>
+    <div class="transition-label">· descendiendo a la tierra de los mortales ·</div>
+  </div>
+
+  <!-- ============================================================
+       SECCIÓN 2 — LA TIERRA (griegos vs monstruos)
+  ============================================================ -->
+  <section id="earth" class="world-section earth-section">
+
+    <!-- Columnas del Partenón al fondo (efecto parallax via JS) -->
+    <div class="parthenon-bg" id="parthenon-bg">
+      <!-- Columnas generadas por CSS -->
+      <div class="parthenon-columns">
+        <div class="pcol"></div><div class="pcol"></div><div class="pcol"></div>
+        <div class="pcol"></div><div class="pcol"></div><div class="pcol"></div>
+        <div class="pcol"></div><div class="pcol"></div><div class="pcol"></div>
+        <div class="pcol"></div>
+      </div>
+      <div class="parthenon-roof"></div>
+    </div>
+
+    <div class="section-inner">
+      <div class="section-badge">II — La Tierra</div>
+      <h2 class="section-title">El Mundo de los Mortales</h2>
+
+      <!-- Escena de combate: Minotauro vs soldados -->
+      <div class="cards-slider" data-slider>
+        <div class="cards-track">
+          <!-- Página 1 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🏛️</span>
+              <h3>El Partenón</h3>
+              <p>Dedicado a Atenea Parthenos, el Partenón coronaba la Acrópolis de Atenas. Para los griegos era la casa terrenal de la diosa, cuya estatua criselefantina de 12 metros relucía dentro del templo.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🐂</span>
+              <h3>El Minotauro</h3>
+              <p>Mitad hombre, mitad toro, el Minotauro habitaba el Laberinto de Creta diseñado por Dédalo. Cada nueve años, Atenas enviaba siete jóvenes y siete doncellas como tributo, hasta que Teseo lo venció con la ayuda del hilo de Ariadna.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">👁️</span>
+              <h3>El Cíclope</h3>
+              <p>Gigantes con un solo ojo, hijos de Urano y Gea. Los más famosos forjaron los rayos de Zeus. Polifemo, el cíclope de la Odisea, retuvo a Ulises y sus hombres hasta que el héroe lo cegó con una estaca encendida.</p>
+            </div>
+          </div>
+          <!-- Página 2 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🗡️</span>
+              <h3>Heracles y los Doce Trabajos</h3>
+              <p>El mayor héroe griego, hijo de Zeus y Alcmena, realizó doce trabajos imposibles impuestos por el rey Euristeo: desde matar la Hidra de Lerna hasta capturar a Cancerbero. Cada hazaña lo acercaba a la inmortalidad que Zeus le tenía reservada.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🧵</span>
+              <h3>Teseo y el Laberinto</h3>
+              <p>Príncipe de Atenas que se ofreció voluntario como tributo para matar al Minotauro. Ariadna, hija de Minos, le entregó un ovillo de hilo para no perderse en el laberinto. Tras la victoria, Teseo olvidó cambiar las velas negras por blancas, y su padre Egeo, creyéndolo muerto, se arrojó al mar.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🐍</span>
+              <h3>Medusa y Perseo</h3>
+              <p>Medusa, la única Gorgona mortal, convertía en piedra a quien la mirara. Perseo la decapitó usando el escudo pulido de Atenea como espejo. De su sangre nacieron Pegaso y el gigante Crisaor. La cabeza siguió siendo un arma petrificante que Perseo usó para salvar a Andrómeda.</p>
+            </div>
+          </div>
+          <!-- Página 3 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🏺</span>
+              <h3>Prometeo y el Fuego</h3>
+              <p>El titán que robó el fuego a los dioses para dárselo a la humanidad fue condenado por Zeus a ser encadenado a una roca del Cáucaso, donde un águila le devoraba el hígado cada día, que regeneraba cada noche. Heracles lo liberó siglos después.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🌹</span>
+              <h3>Orfeo y Eurídice</h3>
+              <p>El músico tracio cuyo canto encantaba bestias y rocas descendió al inframundo para rescatar a su esposa Eurídice. El dios Hades accedió con una condición: no mirar atrás hasta salir. A metros de la luz, Orfeo se volvió. Eurídice regresó a las sombras para siempre.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🌞</span>
+              <h3>Ícaro y Dédalo</h3>
+              <p>Dédalo construyó alas de plumas y cera para escapar de Creta junto a su hijo Ícaro. Ignorando la advertencia paterna de no volar demasiado alto, Ícaro se acercó al sol: la cera se derritió y cayó al mar Egeo. Su historia es el mito eterno de la ambición que desafía los límites.</p>
+            </div>
+          </div>
+        </div>
+        <button class="slider-arrow slider-prev" aria-label="Anterior" tabindex="-1">&#8249;</button>
+        <button class="slider-arrow slider-next" aria-label="Siguiente" tabindex="-1">&#8250;</button>
+        <div class="slider-dots" aria-label="Selector de página del carrusel">
+          <span class="slider-dot active"></span>
+          <span class="slider-dot"></span>
+          <span class="slider-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TRANSICIÓN 2 — AGUA (Tierra → Mar)
+  ============================================================ -->
+  <div class="transition-zone" id="transition-water">
+    <div class="water-curtain water-curtain-left"></div>
+    <div class="water-curtain water-curtain-right"></div>
+    <!-- Olas animadas en capas -->
+    <div class="wave-layer wl1"></div>
+    <div class="wave-layer wl2"></div>
+    <div class="wave-layer wl3"></div>
+    <div class="wave-layer wl4"></div>
+    <div class="breaker-foam bf1"></div>
+    <div class="breaker-foam bf2"></div>
+    <div class="wave-bubbles" id="wave-bubbles"></div>
+    <div class="water-sheen"></div>
+    <div class="transition-label" style="color: white;">
+  · sumergiéndose en las profundidades del Ponto ·
+</div>
+  </div>
+
+  <!-- ============================================================
+       SECCIÓN 3 — EL MAR (mundo submarino)
+  ============================================================ -->
+  <section id="sea" class="world-section sea-section">
+
+    <!-- Partículas de burbujas y peces en el fondo (generadas por JS) -->
+    <div id="sea-particles"></div>
+
+    <!-- Plantas marinas decorativas (CSS) -->
+    <div class="seabed">
+      <div class="seaplant sp1"></div>
+      <div class="seaplant sp2"></div>
+      <div class="seaplant sp3"></div>
+      <div class="seaplant sp4"></div>
+      <div class="seaplant sp5"></div>
+      <div class="coral coral1"></div>
+      <div class="coral coral2"></div>
+      <div class="coral coral3"></div>
+    </div>
+
+    <div class="section-inner">
+      <div class="section-badge">III — El Mar</div>
+      <h2 class="section-title">Las Profundidades del Ponto</h2>
+
+      <!-- Figura: Tritón y Sirena -->
+      <div class="cards-slider" data-slider>
+        <div class="cards-track">
+          <!-- Página 1 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🔱</span>
+              <h3>Tritón</h3>
+              <p>Hijo de Poseidón y Anfítrite, Tritón era el mensajero de las profundidades. Mitad hombre, mitad pez, su tridente y caracola mágica podían calmar o enfurecer los mares. Los marineros le ofrecían sacrificios antes de zarpar.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🧜</span>
+              <h3>Las Sirenas</h3>
+              <p>Criaturas con rostro de mujer y cuerpo de ave (en la tradición más antigua) o con cola de pez, cuyo canto irresistible atraía a los marineros hacia los acantilados. Ulises se ató al mástil de su nave para oír su canto sin sucumbir.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🌊</span>
+              <h3>Poseidón</h3>
+              <p>Señor de los mares, terremotos y caballos, Poseidón gobernaba el Mediterráneo desde su palacio de coral bajo las aguas. Su temperamento, tan inestable como el océano, desataba tormentas contra quienes lo ofendieran.</p>
+            </div>
+          </div>
+          <!-- Página 2 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🐙</span>
+              <h3>Escila y Caribdis</h3>
+              <p>Los dos monstruos que guardaban un estrecho infranqueable: Escila, con seis cabezas en largos cuellos de serpiente que devoraban marineros, y Caribdis, un remolino que tragaba el mar tres veces al día. Ulises eligió pasar junto a Escila para salvar su nave.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🐉</span>
+              <h3>Las Nereidas</h3>
+              <p>Las cincuenta hijas del dios marino Nereo, ninfas de los mares tranquilos. La más famosa, Tetis, madre de Aquiles, lo sumergió en el Estigia para hacerlo invulnerable, olvidando el talón por donde lo sostenía. Intercedían ante Poseidón para proteger a los navegantes.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">⚓</span>
+              <h3>Los Argonautas</h3>
+              <p>Jasón y sus cincuenta héroes navegaron en el Argo hasta la Cólquide en busca del Vellocino de Oro. Atravesaron las Simplégades, rocas que chocaban entre sí, y enfrentaron sirenas, gigantes de bronce y dragones. Medea, princesa hechicera, los salvó a cambio del amor de Jasón.</p>
+            </div>
+          </div>
+          <!-- Página 3 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🌀</span>
+              <h3>La Odisea de Ulises</h3>
+              <p>Diez años navegando para volver a Ítaca tras la guerra de Troya. Poseidón, enfurecido por el cegamiento de su hijo Polifemo, persiguió a Ulises por el Mediterráneo. El héroe sobrevivió a Circe, los Lestrigones y la isla de Calipso antes de reencontrarse con Penélope.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🐋</span>
+              <h3>Proteo, el Anciano del Mar</h3>
+              <p>El dios marino que conocía el pasado, el presente y el futuro pero rehusaba revelar nada. Para obtener su saber había que capturarlo mientras dormía en la orilla; transformaba su cuerpo en animales, fuego y agua para escapar, pero si se le sujetaba hasta recuperar su forma original, respondía.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🏝️</span>
+              <h3>Calipso y la Inmortalidad</h3>
+              <p>La ninfa de la isla Ogigia retuvo a Ulises durante siete años ofreciéndole la inmortalidad si permanecía a su lado. Ulises eligió el regreso a su hogar mortal sobre la vida eterna. Zeus tuvo que ordenar a Hermes que convenciera a Calipso de dejarlo marchar.</p>
+            </div>
+          </div>
+        </div>
+        <button class="slider-arrow slider-prev" aria-label="Anterior" tabindex="-1">&#8249;</button>
+        <button class="slider-arrow slider-next" aria-label="Siguiente" tabindex="-1">&#8250;</button>
+        <div class="slider-dots" aria-label="Selector de página del carrusel">
+          <span class="slider-dot active"></span>
+          <span class="slider-dot"></span>
+          <span class="slider-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TRANSICIÓN 3 — TIERRA / GRIETAS (Mar → Inframundo)
+  ============================================================ -->
+  <div class="transition-zone" id="transition-earth">
+    <div class="underworld-gate underworld-gate-left"></div>
+    <div class="underworld-gate underworld-gate-right"></div>
+    <div class="soul-mist sm1"></div>
+    <div class="soul-mist sm2"></div>
+    <div class="soul-mist sm3"></div>
+    <!-- Grietas que se abren en la tierra -->
+    <div class="earth-crack ec1"></div>
+    <div class="earth-crack ec2"></div>
+    <div class="earth-crack ec3"></div>
+    <!-- Resplandor ambiental de brasa -->
+    <div class="ember-glow"></div>
+    <!-- Llamas que emergen -->
+    <div class="flame fl1"></div>
+    <div class="flame fl2"></div>
+    <div class="flame fl3"></div>
+    <div class="flame fl4"></div>
+    <div class="flame fl5"></div>
+    <div class="transition-label" style="color: white;">· descendiendo al reino de los muertos ·</div>
+  </div>
+
+  <!-- ============================================================
+       SECCIÓN 4 — EL INFRAMUNDO (Hades)
+  ============================================================ -->
+  <section id="underworld" class="world-section underworld-section">
+
+    <!-- Partículas de ceniza flotando (generadas por JS) -->
+    <div id="ash-particles"></div>
+
+    <!-- Río Estigia en el fondo -->
+    <div class="styx-river"></div>
+
+    <div class="section-inner">
+      <div class="section-badge">IV — El Inframundo</div>
+      <h2 class="section-title">El Reino del Hades</h2>
+
+      <!-- Cancerbero -->
+      <div class="cards-slider" data-slider>
+        <div class="cards-track">
+          <!-- Página 1 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">⛵</span>
+              <h3>Caronte y el Estigia</h3>
+              <p>El anciano barquero transportaba las almas de los muertos a través del río Estigia cobrando un óbolo. Por eso los griegos enterraban a sus difuntos con una moneda bajo la lengua: sin ella, las almas vagaban cien años en la orilla.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🐕</span>
+              <h3>Cancerbero</h3>
+              <p>El guardián del inframundo: un perro de tres cabezas (algunas versiones hablan de cincuenta) que impedía que los vivos entraran y los muertos escaparan. Solo Orfeo lo durmió con su lira, y Heracles lo capturó como su duodécimo trabajo.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🌑</span>
+              <h3>El Inframundo</h3>
+              <p>El inframundo griego (reino de los muertos, no confundir con su soberano, el dios Hades) no era un lugar de castigo universal: el Tártaro guardaba a los condenados, los Campos Elíseos acogían a los héroes, y el Asfódelo era el destino de las almas ordinarias.</p>
+            </div>
+          </div>
+          <!-- Página 2 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">⚖️</span>
+              <h3>Los Jueces del Inframundo</h3>
+              <p>Minos, Radamantis y Éaco —tres reyes mortales de vidas ejemplares— juzgaban las almas a su llegada. Minos tenía la última palabra. Las almas virtuosas iban a los Campos Elíseos, las malvadas al Tártaro, y las neutras vagaban por el Asfódelo sin memoria ni dolor.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">🌺</span>
+              <h3>Perséfone, Reina del Inframundo</h3>
+              <p>Raptada por el dios Hades mientras recogía flores, Perséfone comió seis semillas de granada en el inframundo, quedando ligada a él para siempre. Gobierna junto al dios Hades con autoridad propia: fue ella quien concedió a Orfeo el permiso para llevarse a Eurídice.</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🔦</span>
+              <h3>Los Cinco Ríos del Inframundo</h3>
+              <p>El Estigia (odio), el Aqueronte (aflicción), el Lete (olvido), el Flegetonte (fuego) y el Cocito (lamento) atravesaban el reino de los muertos. Las almas bebían del Lete para olvidar su vida anterior antes de la reencarnación. Solo los iniciados en los Misterios de Eleusis recordaban.</p>
+            </div>
+          </div>
+          <!-- Página 3 -->
+          <div class="cards-page">
+            <div class="info-card">
+              <span class="card-icon">🪨</span>
+              <h3>Sísifo y el Tártaro</h3>
+              <p>El rey más astuto de los mortales engañó a la muerte dos veces, encadenando a Tánatos y convenciendo a Perséfone de dejarlo volver. Su castigo eterno: empujar una roca colina arriba que siempre rodaba de vuelta antes de llegar a la cima. El símbolo del esfuerzo inútil.</p>
+            </div>
+            <div class="info-card featured">
+              <span class="card-icon">💧</span>
+              <h3>Tántalo y el Castigo Eterno</h3>
+              <p>El rey que sirvió a su propio hijo Pélope como banquete a los dioses fue condenado a estar sumergido hasta el cuello en agua que retrocedía al intentar beber, bajo árboles con frutos que se alejaban al intentar coger. De su nombre viene la palabra "tantalizar".</p>
+            </div>
+            <div class="info-card">
+              <span class="card-icon">🦅</span>
+              <h3>Los Campos Elíseos</h3>
+              <p>El paraíso griego reservado a los héroes y los justos: un lugar de eterna primavera donde las almas vivían en perfecta felicidad. Las más virtuosas podían reencarnarse tres veces y, si alcanzaban los Elíseos en cada vida, accedían a las Islas de los Bienaventurados, el máximo honor.</p>
+            </div>
+          </div>
+        </div>
+        <button class="slider-arrow slider-prev" aria-label="Anterior" tabindex="-1">&#8249;</button>
+        <button class="slider-arrow slider-next" aria-label="Siguiente" tabindex="-1">&#8250;</button>
+        <div class="slider-dots" aria-label="Selector de página del carrusel">
+          <span class="slider-dot active"></span>
+          <span class="slider-dot"></span>
+          <span class="slider-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TRANSICIÓN 4 — PROFECÍA (Inframundo → Oráculo)
+  ============================================================ -->
+  <div class="transition-zone" id="transition-oracle" aria-hidden="true">
+    <div class="oracle-glow og1"></div>
+    <div class="oracle-glow og2"></div>
+    <div class="oracle-smoke os1"></div>
+    <div class="oracle-smoke os2"></div>
+    <div class="transition-label" style="color: #fff8d0;">· consultando el Oráculo de Delfos ·</div>
+  </div>
+
+  <!-- ============================================================
+       SECCIÓN 5 — ORÁCULO DE DELFOS (interacción + backend-ready)
+  ============================================================ -->
+  <section id="oracle" class="world-section oracle-section" data-section-id="oracle" aria-labelledby="oracle-title">
+    <div class="oracle-stars" aria-hidden="true"></div>
+
+    <div class="section-inner oracle-inner">
+      <div class="section-badge">V — El Oráculo</div>
+      <h2 class="section-title" id="oracle-title">El Veredicto de Delfos</h2>
+      <p class="oracle-lead">
+        Responde al desafío final, recibe tu título mítico y guarda tu resultado en el ranking.
+        Por ahora funciona con almacenamiento local; la estructura está preparada para conectarse a PHP/MySQL o Node.
+      </p>
+
+      <div class="oracle-layout">
+        <article class="oracle-panel oracle-intro">
+          <div class="oracle-orb" aria-hidden="true">
+            <span>Ω</span>
+          </div>
+          <h3>El viaje termina con una prueba</h3>
+          <p>
+            Esta sección convierte la landing en una experiencia interactiva: formulario, validación,
+            cálculo de resultado, ranking y futura conexión con base de datos.
+          </p>
+          <ul class="oracle-features">
+            <li>Validación de respuestas</li>
+            <li>Resultado personalizado</li>
+            <li>Ranking persistente</li>
+            <li>Preparado para backend</li>
+          </ul>
+        </article>
+
+        <form class="oracle-panel oracle-form" id="oracle-form" novalidate>
+          <div class="oracle-field">
+            <label for="visitor-name">Nombre del iniciado</label>
+            <input id="visitor-name" name="nombre" type="text" maxlength="24" placeholder="Ej. Ariadna" autocomplete="name" required/>
+          </div>
+
+          <fieldset class="oracle-question">
+            <legend>1. ¿Quién gobierna los mares?</legend>
+            <label><input type="radio" name="q1" value="0" required/> Zeus</label>
+            <label><input type="radio" name="q1" value="1"/> Poseidón</label>
+            <label><input type="radio" name="q1" value="0"/> Hades</label>
+          </fieldset>
+
+          <fieldset class="oracle-question">
+            <legend>2. ¿Qué héroe venció al Minotauro?</legend>
+            <label><input type="radio" name="q2" value="1" required/> Teseo</label>
+            <label><input type="radio" name="q2" value="0"/> Orfeo</label>
+            <label><input type="radio" name="q2" value="0"/> Jasón</label>
+          </fieldset>
+
+          <fieldset class="oracle-question">
+            <legend>3. ¿Qué dios guiaba las almas al inframundo?</legend>
+            <label><input type="radio" name="q3" value="0" required/> Apolo</label>
+            <label><input type="radio" name="q3" value="1"/> Hermes</label>
+            <label><input type="radio" name="q3" value="0"/> Ares</label>
+          </fieldset>
+
+          <fieldset class="oracle-question">
+            <legend>4. ¿Cómo se llama el barquero del Estigia?</legend>
+            <label><input type="radio" name="q4" value="0" required/> Minos</label>
+            <label><input type="radio" name="q4" value="0"/> Morfeo</label>
+            <label><input type="radio" name="q4" value="1"/> Caronte</label>
+          </fieldset>
+
+          <fieldset class="oracle-question">
+            <legend>5. ¿Qué criatura nació de la sangre de Medusa?</legend>
+            <label><input type="radio" name="q5" value="1" required/> Pegaso</label>
+            <label><input type="radio" name="q5" value="0"/> Cancerbero</label>
+            <label><input type="radio" name="q5" value="0"/> Tritón</label>
+          </fieldset>
+
+          <div class="oracle-field">
+            <label for="favorite-world">Mundo favorito</label>
+            <select id="favorite-world" name="mundo" required>
+              <option value="">Elige un reino</option>
+              <option value="Olimpo">Olimpo</option>
+              <option value="Tierra">Tierra</option>
+              <option value="Mar">Mar</option>
+              <option value="Inframundo">Inframundo</option>
+            </select>
+          </div>
+
+          <button class="oracle-submit" type="submit">Consultar el Oráculo</button>
+          <p class="oracle-form-hint" id="oracle-hint">Completa todas las preguntas para revelar la profecía.</p>
+        </form>
+
+        <aside class="oracle-panel oracle-result" aria-live="polite">
+          <h3 id="oracle-result-title">El Oráculo espera</h3>
+          <p id="oracle-result-text">Cuando completes la prueba, aquí aparecerá tu título mítico y tu lugar en el ranking.</p>
+          <div class="oracle-score" id="oracle-score" hidden>
+            <span class="oracle-score-number">0/5</span>
+            <span class="oracle-score-label">sabiduría mítica</span>
+          </div>
+
+          <div class="ranking-box">
+            <h4>Ranking de iniciados</h4>
+            <ol id="oracle-ranking" class="oracle-ranking">
+              <li class="empty-ranking">Todavía no hay profecías guardadas.</li>
+            </ol>
+          </div>
+
+          <button class="oracle-reset" id="oracle-reset" type="button">Limpiar ranking local</button>
+        </aside>
+      </div>
+
+      <div class="backend-note">
+        <h3>Preparación backend</h3>
+        <p>
+          La sección ya genera un objeto con nombre, puntuación, título, mundo favorito y fecha.
+          En la carpeta <code>api/</code> tienes una propuesta PHP/MySQL lista para conectar cuando quieras activar persistencia real.
+        </p>
+      </div>
+    </div>
+
+    <!-- Pie de página épico -->
+    <footer class="myth-footer">
+      <div class="footer-ornament">⚡ · 🔱 · ☽ · 🌑 · ⚡</div>
+      <p class="footer-text">
+        «De la luz eterna del Olimpo a las sombras eternas del Érebo,<br/>
+        los griegos tejieron un cosmos donde dioses y mortales compartían destino.»
+      </p>
+      <p class="footer-sub">Mitología Griega · Experiencia web inmersiva con Oráculo interactivo</p>
+    </footer>
+  </section>
+
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

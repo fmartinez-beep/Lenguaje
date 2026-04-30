@@ -1,0 +1,15 @@
+CREATE DATABASE IF NOT EXISTS mitologia_oraculo
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE mitologia_oraculo;
+
+CREATE TABLE IF NOT EXISTS resultados_oraculo (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(24) NOT NULL,
+  puntuacion TINYINT UNSIGNED NOT NULL,
+  titulo VARCHAR(60) NOT NULL,
+  mundo VARCHAR(30) NOT NULL,
+  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_ranking (puntuacion DESC, fecha DESC)
+);
