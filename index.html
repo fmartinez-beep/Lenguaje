@@ -523,7 +523,7 @@
       <h2 class="section-title" id="oracle-title">El Veredicto de Delfos</h2>
       <p class="oracle-lead">
         Responde al desafío final, recibe tu título mítico y guarda tu resultado en el ranking.
-        Por ahora funciona con almacenamiento local; la estructura está preparada para conectarse a PHP/MySQL o Node.
+        El ranking se sincroniza con Firebase Firestore y mantiene una copia local de respaldo.
       </p>
 
       <div class="oracle-layout">
@@ -584,16 +584,6 @@
 
           <button class="oracle-reset" id="oracle-reset" type="button">Limpiar ranking local</button>
         </aside>
-      </div>
-
-      <div class="backend-note">
-        <h3>Preparación backend</h3>
-        <p class="backend-status" id="backend-status">Comprobando persistencia del Oráculo...</p>
-        <p>
-          La sección genera un objeto con nombre, puntuación, total de preguntas, título, mundo favorito y fecha.
-          Si la web se sirve desde PHP con MySQL importado, el ranking se guarda en el backend; al abrirla como archivo local,
-          se mantiene una copia funcional con <code>localStorage</code>.
-        </p>
       </div>
     </div>
 

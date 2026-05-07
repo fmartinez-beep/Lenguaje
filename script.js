@@ -752,12 +752,18 @@
     const STORAGE_KEY = 'mitologia-oraculo-ranking';
     const SESSION_QUESTIONS_KEY = 'mitologia-oraculo-preguntas-sesion';
     const QUESTIONS_PER_SESSION = 5;
-    const backendMode = document.body.dataset.backend || 'auto';
-    const backendEnabled = backendMode === 'php' || (backendMode === 'auto' && window.location.protocol !== 'file:');
-    const endpoints = {
-      save: 'api/guardar_resultado.php',
-      list: 'api/obtener_ranking.php',
+    const FIREBASE_COLLECTION = 'resultados_oraculo';
+    const JSON_BACKUP_ENDPOINT = 'api/guardar_resultado_json.php';
+    const firebaseConfig = {
+      apiKey: 'AIzaSyA38WW5QQ_ou_6v9r7TrOV5yoG5YsBvrlU',
+      authDomain: 'landing-4c063.firebaseapp.com',
+      projectId: 'landing-4c063',
+      storageBucket: 'landing-4c063.firebasestorage.app',
+      messagingSenderId: '1092712513900',
+      appId: '1:1092712513900:web:0e8dc98b43f42ae1243349',
+      measurementId: 'G-HYQ16KFM3P',
     };
+    let firebaseClientPromise;
     const questionPool = [
       {
         id: 'mares-poseidon',
@@ -1056,6 +1062,20 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, 12)));
     };
 
+    const getFirebaseClient = async () => {
+      if (!firebaseClientPromise) {
+        firebaseClientPromise = Promise.all([
+          import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js'),
+          import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js'),
+        ]).then(([appModule, firestoreModule]) => {
+          const app = appModule.initializeApp(firebaseConfig);
+          const db = firestoreModule.getFirestore(app);
+          return { db, firestore: firestoreModule };
+        });
+      }
+      return firebaseClientPromise;
+    };
+
     const getTitleByScore = score => {
       if (score === QUESTIONS_PER_SESSION) return 'Elegido del Olimpo';
       if (score === QUESTIONS_PER_SESSION - 1) return 'Héroe de los Mitos';
@@ -1075,8 +1095,27 @@
       return messages[score] || messages[0];
     };
 
+    const getEntryDate = entry => {
+      if (entry.fecha?.toDate) return entry.fecha.toDate();
+      if (entry.fecha?.seconds) return new Date(entry.fecha.seconds * 1000);
+      return new Date(entry.fecha || Date.now());
+    };
+
+    const saveEntryToJsonFile = async entry => {
+      try {
+        const response = await fetch(JSON_BACKUP_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(entry),
+        });
+        if (!response.ok) throw new Error('No se pudo guardar la copia JSON');
+      } catch (error) {
+        console.warn('No se pudo guardar el resultado en resultados_oraculo.json:', error);
+      }
+    };
+
     const sortRanking = entries => entries
-      .sort((a, b) => b.puntuacion - a.puntuacion || new Date(b.fecha) - new Date(a.fecha))
+      .sort((a, b) => b.puntuacion - a.puntuacion || getEntryDate(b) - getEntryDate(a))
       .slice(0, 8);
 
     const renderRanking = entries => {
@@ -1092,7 +1131,7 @@
 
       sorted.forEach(entry => {
         const item = document.createElement('li');
-        const date = new Date(entry.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+        const date = getEntryDate(entry).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
         const total = Number(entry.total || QUESTIONS_PER_SESSION);
         item.innerHTML = `<strong>${escapeHTML(entry.nombre)}</strong> — ${entry.puntuacion}/${total} · ${escapeHTML(entry.titulo)} <small>(${escapeHTML(entry.mundo)}, ${date})</small>`;
         ranking.appendChild(item);
@@ -1104,26 +1143,22 @@
     }[char]));
 
     const loadRanking = async () => {
-      if (backendEnabled) {
-        try {
-          const response = await fetch(endpoints.list, {
-            cache: 'no-store',
-            headers: { Accept: 'application/json' },
-          });
-          if (response.ok) {
-            const data = await response.json();
-            if (Array.isArray(data.resultados)) {
-              setBackendStatus('Backend PHP/MySQL conectado. El ranking se está leyendo desde la base de datos.', 'remote');
-              renderRanking(data.resultados);
-              return;
-            }
-          }
-          throw new Error('Respuesta de backend no válida');
-        } catch {
-          setBackendStatus('Backend no disponible ahora. El Oráculo funciona con ranking local de respaldo.', 'local');
-        }
-      } else {
-        setBackendStatus('Modo local activo. Al servir la web con PHP/MySQL, el ranking usará el backend automáticamente.', 'local');
+      try {
+        const { db, firestore } = await getFirebaseClient();
+        const rankingQuery = firestore.query(
+          firestore.collection(db, FIREBASE_COLLECTION),
+          firestore.orderBy('puntuacion', 'desc'),
+          firestore.orderBy('fecha', 'desc'),
+          firestore.limit(8)
+        );
+        const snapshot = await firestore.getDocs(rankingQuery);
+        const entries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setBackendStatus('Firebase conectado. El ranking se está leyendo desde Firestore.', 'remote');
+        renderRanking(entries);
+        return;
+      } catch (error) {
+        console.warn('No se pudo cargar el ranking desde Firebase:', error);
+        setBackendStatus('Firebase no disponible ahora. El Oráculo funciona con ranking local de respaldo.', 'local');
       }
       renderRanking(getLocalRanking());
     };
@@ -1133,18 +1168,23 @@
       const next = sortRanking([entry, ...current]);
       setLocalRanking(next);
       renderRanking(next);
+      saveEntryToJsonFile(entry);
 
-      if (!backendEnabled) return;
       try {
-        const response = await fetch(endpoints.save, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(entry),
+        const { db, firestore } = await getFirebaseClient();
+        await firestore.addDoc(firestore.collection(db, FIREBASE_COLLECTION), {
+          nombre: entry.nombre,
+          puntuacion: entry.puntuacion,
+          total: entry.total,
+          titulo: entry.titulo,
+          mundo: entry.mundo,
+          fecha: firestore.serverTimestamp(),
         });
-        if (!response.ok) throw new Error('No se pudo guardar en backend');
-        setBackendStatus('Resultado guardado en PHP/MySQL y en la copia local de respaldo.', 'remote');
-      } catch {
-        setBackendStatus('No se pudo guardar en backend. El resultado queda protegido en localStorage.', 'local');
+        setBackendStatus('Resultado guardado en Firebase y en la copia local de respaldo.', 'remote');
+        loadRanking();
+      } catch (error) {
+        console.warn('No se pudo guardar el resultado en Firebase:', error);
+        setBackendStatus('No se pudo guardar en Firebase. El resultado queda protegido en localStorage.', 'local');
       }
     };
 

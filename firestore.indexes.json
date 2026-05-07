@@ -1,0 +1,19 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "resultados_oraculo",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "puntuacion",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

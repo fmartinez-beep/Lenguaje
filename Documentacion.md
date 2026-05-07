@@ -3,41 +3,127 @@
 ## 1. Datos generales
 
 **Proyecto:** Mitologia Griega - Del Olimpo al Inframundo  
-**Version de entrega:** 0.9  
+**Version de entrega:** 1.0  
 **Repositorio:** <https://github.com/fmartinez-beep/Lenguaje>  
-**Producto evaluable:** landing page funcional con frontend, backend PHP/MySQL, documentacion tecnica y trazabilidad en Git.
 
-La web propone una experiencia inmersiva sobre mitologia griega organizada en cinco zonas narrativas: hero inicial, Olimpo, Tierra, Mar, Inframundo y Oraculo de Delfos. La parte final incorpora un test interactivo, calculo de resultado, ranking persistente y conexion real con backend.
+
+La web propone una experiencia inmersiva sobre mitologia griega organizada en cinco zonas narrativas: hero inicial, Olimpo, Tierra, Mar, Inframundo y Oraculo de Delfos. La parte final incorpora un test interactivo, calculo de resultado, ranking persistente y conexion real con Firebase Firestore como backend principal.
 
 ## 2. Requisitos de ejecucion
 
-### Ejecucion sin backend
+### Como abrir el proyecto descargado en Visual Studio Code
 
-Para revisar solo el frontend se puede abrir `index.html` directamente en el navegador. En ese modo, el Oraculo usa `localStorage` para guardar el ranking local.
+El profesor descargara el proyecto completo desde GitHub. Para revisar el codigo en Visual Studio Code:
 
-### Ejecucion con backend PHP/MySQL
+1. Entrar al repositorio de GitHub.
+2. Pulsar `Code`.
+3. Pulsar `Download ZIP`.
+4. Descomprimir el ZIP.
+5. Abrir Visual Studio Code.
+6. Ir a `File > Open Folder...` o `Archivo > Abrir carpeta...`.
+7. Seleccionar la carpeta descomprimida del proyecto.
+
+Al abrir la carpeta en Visual Studio Code, los archivos principales apareceran en el explorador lateral, en la raiz del proyecto:
+
+```text
+mitologia-griega-audio-mp3-optimizado/
+|-- index.html
+|-- style.css
+`-- script.js
+```
+
+Para ver el codigo, debe hacer clic en `index.html`, `style.css` o `script.js` dentro del explorador de Visual Studio Code.
+
+Para ver la web, puede hacer doble clic en `index.html` desde el explorador de archivos del sistema. En ese modo el ranking intenta sincronizarse con Firebase Firestore y conserva una copia local en `localStorage`.
+
+### Requisitos generales
+
+- Git o descarga ZIP desde GitHub.
+- Navegador moderno.
+- Conexion a internet para cargar Firebase y guardar el ranking en Firestore.
+- Docker Desktop solo si se quiere probar la copia JSON local mediante PHP.
+
+No es necesario instalar PHP ni MySQL para probar la funcionalidad principal, porque el backend principal es Firebase Firestore.
+
+### Ejecucion directa
+
+Para revisar la web se puede abrir `index.html` directamente en el navegador. En ese modo, el Oraculo carga Firebase desde CDN, guarda resultados en Firestore y mantiene `localStorage` como copia de respaldo.
+
+### Ejecucion opcional con servidor local PHP
+
+El proyecto tambien incluye un endpoint PHP para guardar una copia local en `resultados_oraculo.json`. Para que esa copia JSON se escriba en el archivo del proyecto, la pagina debe abrirse desde un servidor PHP. Opcion con Docker:
+
+```bash
+docker compose up --build
+```
+
+En Windows tambien se puede ejecutar:
+
+```powershell
+.\start-backend.ps1
+```
+
+La web queda disponible en:
+
+```text
+http://localhost:8080
+```
+
+El endpoint PHP de comprobacion queda disponible en:
+
+```text
+http://localhost:8080/api/health.php
+```
+
+Respuesta esperada:
+
+```json
+{"ok":true,"service":"oraculo-backend","database":"connected"}
+```
+
+phpMyAdmin queda disponible en caso de querer revisar la base MySQL incluida como apoyo local:
+
+```text
+http://localhost:8081
+```
+
+Credenciales de phpMyAdmin:
+
+- Servidor: `db`
+- Usuario: `oraculo_user`
+- Contrasena: `oraculo_pass`
+- Base de datos: `mitologia_oraculo`
+
+Puertos usados por defecto:
+
+- Web PHP/Apache: `8080`
+- phpMyAdmin: `8081`
+- MySQL expuesto al equipo anfitrion: `3307`
+
+Si algun puerto esta ocupado, copiar `.env.example` como `.env`, cambiar `WEB_PORT`, `PHPMYADMIN_PORT` o `MYSQL_PORT`, y volver a ejecutar `docker compose up --build`.
+
+Para parar los contenedores:
+
+```bash
+docker compose down
+```
+
+Para borrar tambien los datos de MySQL local y empezar desde cero:
+
+```bash
+docker compose down -v
+```
+
+Opcion con XAMPP/Laragon para la copia JSON/PHP:
 
 1. Copiar el proyecto en la carpeta publica de XAMPP, Laragon o un servidor PHP equivalente.
-2. Crear la base de datos importando `database.sql`.
-3. Revisar credenciales en `api/config.php`.
-4. Abrir la web desde una URL HTTP, por ejemplo:
+2. Abrir la web desde una URL HTTP, por ejemplo:
 
 ```text
 http://localhost/mitologia-griega-audio-mp3-optimizado/
 ```
 
-La etiqueta `<body data-backend="auto">` permite que el JavaScript use PHP/MySQL automaticamente cuando la pagina no se abre como archivo local.
-
-Fragmento relevante:
-
-```html
-<body data-backend="auto">
-```
-
-```js
-const backendMode = document.body.dataset.backend || 'auto';
-const backendEnabled = backendMode === 'php' || (backendMode === 'auto' && window.location.protocol !== 'file:');
-```
+Al abrir desde HTTP, el navegador puede llamar a `api/guardar_resultado_json.php` y ese endpoint puede escribir en `resultados_oraculo.json`. Si se abre como `file://`, el navegador no puede modificar archivos locales por seguridad.
 
 ## 3. Estructura del proyecto
 
@@ -48,10 +134,21 @@ const backendEnabled = backendMode === 'php' || (backendMode === 'auto' && windo
 |-- script.js
 |-- README.md
 |-- Documentacion.md
+|-- FIREBASE.md
 |-- database.sql
+|-- firebase.json
+|-- firestore.rules
+|-- firestore.indexes.json
+|-- resultados_oraculo.json
+|-- Dockerfile
+|-- docker-compose.yml
+|-- start-backend.ps1
+|-- .env.example
 |-- api/
 |   |-- config.php
+|   |-- health.php
 |   |-- guardar_resultado.php
+|   |-- guardar_resultado_json.php
 |   `-- obtener_ranking.php
 `-- audio/
 ```
@@ -62,9 +159,13 @@ const backendEnabled = backendMode === 'php' || (backendMode === 'auto' && windo
 
 `style.css` contiene el sistema visual, responsive design, animaciones, carruseles, layout de secciones y estados de validacion.
 
-`script.js` contiene la logica de interaccion: progreso de scroll, navegacion, audio, particulas, carruseles, test, validacion, ranking y comunicacion con backend.
+`script.js` contiene la logica de interaccion: progreso de scroll, navegacion, audio, particulas, carruseles, test, validacion, ranking y comunicacion con Firebase Firestore.
 
-`api/` contiene el backend PHP que guarda y recupera resultados desde MySQL.
+`firestore.rules`, `firestore.indexes.json` y `firebase.json` contienen la configuracion del backend principal en Firebase.
+
+`api/guardar_resultado_json.php` contiene el endpoint PHP opcional que permite guardar una copia local en `resultados_oraculo.json` cuando la web se ejecuta desde un servidor PHP.
+
+`api/guardar_resultado.php`, `api/obtener_ranking.php`, `api/config.php`, `database.sql` y Docker mantienen una alternativa PHP/MySQL local y sirven como apoyo para revisar backend tradicional si se desea.
 
 ## 4. Frontend: estructura HTML y calidad semantica
 
@@ -438,7 +539,7 @@ Utilidad: convierte la landing en una experiencia interactiva real, con feedback
 
 ### 8.7 Ranking persistente en frontend
 
-Aunque el backend falle o la web se abra como archivo local, los resultados se guardan en `localStorage`. Esto permite revisar la funcionalidad sin servidor.
+Aunque Firebase falle o la web se abra como archivo local, los resultados se guardan en `localStorage`. Esto permite revisar la funcionalidad sin servidor.
 
 Metodos principales:
 
@@ -471,113 +572,236 @@ const sortRanking = entries => entries
   .slice(0, 8);
 ```
 
-Utilidad: garantiza que el proyecto sea ejecutable y revisable incluso sin configurar MySQL.
+Utilidad: garantiza que el proyecto sea ejecutable y revisable incluso si Firestore no responde en ese momento.
 
-### 8.8 Backend PHP/MySQL integrado
+### 8.8 Guardado de datos en Firebase Firestore
 
-El backend permite guardar y recuperar el ranking desde una base de datos MySQL. Esta funcionalidad cumple el requisito de backend funcional y relaciona el formulario del frontend con logica de servidor.
+Para que el resultado del test quede guardado en una base de datos externa, se conecto la pagina con Firebase Firestore desde `script.js`. La web usa la configuracion de la aplicacion web creada en Firebase y carga los modulos oficiales mediante imports dinamicos desde CDN, sin necesidad de instalar paquetes con npm.
 
-Archivos:
+Archivos relacionados:
 
-- `api/config.php`
-- `api/guardar_resultado.php`
-- `api/obtener_ranking.php`
-- `database.sql`
+- `script.js`
+- `firestore.rules`
+- `firestore.indexes.json`
+- `firebase.json`
 
-Conexion:
+La coleccion usada en Firestore se llama:
 
-```php
-function getConnection(): PDO {
-    global $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS, $DB_CHARSET;
+```text
+resultados_oraculo
+```
 
-    $dsn = "mysql:host=$DB_HOST;dbname=$DB_NAME;charset=$DB_CHARSET";
-    return new PDO($dsn, $DB_USER, $DB_PASS, $options);
+Cada documento guardado representa un resultado del Oraculo y contiene:
+
+```json
+{
+  "nombre": "Ariadna",
+  "puntuacion": 5,
+  "total": 5,
+  "titulo": "Elegido del Olimpo",
+  "mundo": "Olimpo",
+  "fecha": "serverTimestamp()"
 }
 ```
 
-Guardado:
-
-```php
-$stmt = $pdo->prepare(
-    'INSERT INTO resultados_oraculo (nombre, puntuacion, total, titulo, mundo)
-     VALUES (:nombre, :puntuacion, :total, :titulo, :mundo)'
-);
-```
-
-Lectura:
-
-```php
-$stmt = $pdo->query(
-    'SELECT nombre, puntuacion, total, titulo, mundo, fecha
-     FROM resultados_oraculo
-     ORDER BY puntuacion DESC, fecha DESC
-     LIMIT 8'
-);
-```
-
-El backend tambien contempla una base de datos creada con una version anterior sin la columna `total`: si MySQL devuelve el error de columna inexistente, se usa una consulta compatible con `5 AS total` o un `INSERT` sin esa columna. Asi se evita que una instalacion previa deje la entrega sin ejecutar.
-
-Tabla:
-
-```sql
-CREATE TABLE IF NOT EXISTS resultados_oraculo (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(24) NOT NULL,
-  puntuacion TINYINT UNSIGNED NOT NULL,
-  total TINYINT UNSIGNED NOT NULL DEFAULT 5,
-  titulo VARCHAR(60) NOT NULL,
-  mundo VARCHAR(30) NOT NULL,
-  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_ranking (puntuacion DESC, fecha DESC)
-);
-```
-
-Integracion desde JavaScript:
+En `script.js` se definio la coleccion y la configuracion del proyecto Firebase:
 
 ```js
-const response = await fetch(endpoints.save, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-  body: JSON.stringify(entry),
+const FIREBASE_COLLECTION = 'resultados_oraculo';
+
+const firebaseConfig = {
+  apiKey: '...',
+  authDomain: 'landing-4c063.firebaseapp.com',
+  projectId: 'landing-4c063',
+  storageBucket: 'landing-4c063.firebasestorage.app',
+  messagingSenderId: '1092712513900',
+  appId: '1:1092712513900:web:0e8dc98b43f42ae1243349',
+  measurementId: 'G-HYQ16KFM3P',
+};
+```
+
+Despues se creo una funcion que inicializa Firebase solo cuando hace falta. Esta funcion importa `firebase-app.js` y `firebase-firestore.js`, inicializa la app y devuelve la instancia de Firestore:
+
+```js
+const getFirebaseClient = async () => {
+  if (!firebaseClientPromise) {
+    firebaseClientPromise = Promise.all([
+      import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js'),
+    ]).then(([appModule, firestoreModule]) => {
+      const app = appModule.initializeApp(firebaseConfig);
+      const db = firestoreModule.getFirestore(app);
+      return { db, firestore: firestoreModule };
+    });
+  }
+  return firebaseClientPromise;
+};
+```
+
+Cuando el usuario termina el test, primero se crea un objeto `entry` con el nombre, la puntuacion, el total de preguntas, el titulo mitico, el mundo favorito y la fecha. Despues `saveEntry()` intenta guardar ese resultado en Firestore:
+
+```js
+await firestore.addDoc(firestore.collection(db, FIREBASE_COLLECTION), {
+  nombre: entry.nombre,
+  puntuacion: entry.puntuacion,
+  total: entry.total,
+  titulo: entry.titulo,
+  mundo: entry.mundo,
+  fecha: firestore.serverTimestamp(),
 });
 ```
 
-Utilidad: el ranking no depende solo del navegador cuando se ejecuta en servidor PHP; queda guardado en base de datos.
+Se usa `serverTimestamp()` para que la fecha la genere Firebase y no dependa del reloj del navegador del usuario.
 
-### 8.9 Estado de backend y fallback visible
+Para leer el ranking, la pagina consulta Firestore ordenando primero por puntuacion descendente y despues por fecha descendente. Asi aparecen arriba los mejores resultados y, en caso de empate, el mas reciente:
 
-La pagina muestra si el ranking se esta leyendo desde PHP/MySQL o desde almacenamiento local. Esto facilita la revision tecnica.
+```js
+const rankingQuery = firestore.query(
+  firestore.collection(db, FIREBASE_COLLECTION),
+  firestore.orderBy('puntuacion', 'desc'),
+  firestore.orderBy('fecha', 'desc'),
+  firestore.limit(8)
+);
 
-Fragmento HTML:
-
-```html
-<p class="backend-status" id="backend-status">Comprobando persistencia del Oraculo...</p>
+const snapshot = await firestore.getDocs(rankingQuery);
+const entries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+renderRanking(entries);
 ```
 
-Fragmento JS:
+Para permitir este funcionamiento sin abrir toda la base de datos, se crearon reglas de seguridad en `firestore.rules`. Las reglas permiten leer el ranking publicamente, crear documentos solo si tienen la estructura correcta y bloquean modificaciones o borrados desde la web:
+
+```js
+match /resultados_oraculo/{resultadoId} {
+  allow read: if true;
+  allow create: if isResultadoOraculoValido();
+  allow update, delete: if false;
+}
+```
+
+La funcion `isResultadoOraculoValido()` valida que los campos sean exactamente los esperados, que el nombre no supere 24 caracteres, que la puntuacion este entre 0 y el total, que el mundo sea uno de los cuatro mundos de la pagina y que la fecha sea `request.time`.
+
+Tambien se creo `firestore.indexes.json` porque el ranking necesita una consulta compuesta:
+
+```js
+orderBy('puntuacion', 'desc')
+orderBy('fecha', 'desc')
+limit(8)
+```
+
+Si Firestore no esta disponible, la pagina no se rompe: el resultado se mantiene en `localStorage` como copia de respaldo y el ranking sigue funcionando localmente. Ademas, cuando se ejecuta con PHP, tambien se intenta guardar una copia en `resultados_oraculo.json`.
+
+Utilidad: Firebase permite que el ranking sea persistente entre usuarios y dispositivos, sin depender de que cada navegador tenga su propio almacenamiento local.
+
+### 8.9 Copia local JSON mediante PHP
+
+Ademas del guardado principal en Firebase, el proyecto incluye un pequeno endpoint PHP que registra cada resultado en `resultados_oraculo.json`. Esta parte solo funciona cuando la pagina se abre desde un servidor PHP, porque un navegador abierto como `file://` no puede escribir archivos locales.
+
+Archivos:
+
+- `api/guardar_resultado_json.php`
+- `resultados_oraculo.json`
+- `Dockerfile`
+- `docker-compose.yml`
+
+Desde `script.js`, despues de guardar el resultado en `localStorage`, se llama al endpoint PHP de respaldo:
+
+```js
+const saveEntryToJsonFile = async entry => {
+  const response = await fetch(JSON_BACKUP_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(entry),
+  });
+  if (!response.ok) throw new Error('No se pudo guardar la copia JSON');
+};
+```
+
+El endpoint valida los datos recibidos antes de escribirlos. Comprueba nombre, puntuacion, total, titulo y mundo favorito:
+
+```php
+if (
+    $nombre === '' ||
+    $nombreLength > 24 ||
+    $puntuacion < 0 ||
+    $total < 1 ||
+    $total > 30 ||
+    $puntuacion > $total ||
+    $titulo === '' ||
+    !in_array($mundo, ['Olimpo', 'Tierra', 'Mar', 'Inframundo'], true)
+) {
+    http_response_code(422);
+    echo json_encode(['ok' => false, 'error' => 'Datos invalidos']);
+    exit;
+}
+```
+
+La ruta del archivo JSON se calcula desde la raiz del proyecto:
+
+```php
+$jsonPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'resultados_oraculo.json';
+```
+
+Para evitar corrupcion del archivo si llegan dos peticiones a la vez, se usa bloqueo con `flock()`:
+
+```php
+if (!flock($handle, LOCK_EX)) {
+    throw new RuntimeException('No se pudo bloquear el archivo JSON');
+}
+```
+
+Despues se inserta el nuevo resultado, se ordena por puntuacion y fecha, se limita el historial y se reescribe el JSON con formato legible:
+
+```php
+array_unshift($entries, $entry);
+usort($entries, function ($a, $b) {
+    $scoreCompare = intval($b['puntuacion'] ?? 0) <=> intval($a['puntuacion'] ?? 0);
+    if ($scoreCompare !== 0) {
+        return $scoreCompare;
+    }
+    return strtotime($b['fecha'] ?? 'now') <=> strtotime($a['fecha'] ?? 'now');
+});
+$entries = array_slice($entries, 0, 50);
+```
+
+Utilidad: permite demostrar una escritura real en servidor local y deja una copia revisable en VS Code, sin sustituir al backend principal de Firebase.
+
+### 8.10 Estado de guardado y fallback
+
+La pagina intenta guardar cada resultado en Firebase Firestore. Si la conexion con Firebase falla, el resultado se conserva en `localStorage` para no perder la respuesta del usuario. Si la web se ejecuta mediante PHP, tambien se intenta registrar una copia en `resultados_oraculo.json`.
+
+Fragmento JS del cambio de estado:
 
 ```js
 const setBackendStatus = (message, mode = 'local') => {
+  if (!backendStatus) return;
   backendStatus.textContent = message;
   backendStatus.className = `backend-status backend-status-${mode}`;
 };
 ```
 
-Fragmento CSS:
+Aunque actualmente no se muestra el recuadro inferior de estado en la interfaz, la funcion se mantiene defensiva: si el elemento `backend-status` no existe, no produce errores.
 
-```css
-.backend-status-remote {
-  border-color: rgba(89, 210, 139, 0.44);
-  color: #c9ffd9;
-  background: rgba(89, 210, 139, 0.12);
-}
+Fragmento del guardado local previo al envio remoto:
+
+```js
+const current = getLocalRanking();
+const next = sortRanking([entry, ...current]);
+setLocalRanking(next);
+renderRanking(next);
 ```
 
-Utilidad: evita ambiguedad en la evaluacion y demuestra si la persistencia real esta activa.
+Utilidad: evita perder resultados aunque haya un fallo temporal de red o Firebase no este disponible durante la prueba.
 
 ## 9. Validacion y seguridad basica
 
-El frontend valida campos obligatorios y el backend vuelve a validar los datos recibidos. No se confia solo en JavaScript.
+El frontend valida campos obligatorios y el backend vuelve a validar los datos recibidos. En Firebase esta validacion se realiza con reglas de Firestore, y en la copia JSON se repite en PHP. No se confia solo en JavaScript.
+
+Fragmento de reglas Firestore:
+
+```js
+allow create: if isResultadoOraculoValido();
+allow update, delete: if false;
+```
 
 Fragmento PHP:
 
@@ -652,13 +876,18 @@ Pruebas de frontend:
 Pruebas pendientes segun entorno:
 
 - La sintaxis PHP debe revisarse con `php -l` en un equipo con PHP instalado.
-- La persistencia MySQL debe probarse importando `database.sql` en XAMPP/Laragon y abriendo la web por HTTP.
+- La escritura en `resultados_oraculo.json` debe probarse arrancando Docker Compose o sirviendo la web con XAMPP/Laragon.
+- La persistencia principal debe comprobarse en Firebase Firestore revisando la coleccion `resultados_oraculo`.
 
 Comando recomendado para backend:
 
 ```bash
+docker compose up --build
+curl http://localhost:8080/api/health.php
 php -l api/config.php
+php -l api/health.php
 php -l api/guardar_resultado.php
+php -l api/guardar_resultado_json.php
 php -l api/obtener_ranking.php
 ```
 
@@ -667,7 +896,7 @@ php -l api/obtener_ranking.php
 | Requisito | Cumplimiento |
 | --- | --- |
 | Frontend funcional | `index.html`, `style.css`, `script.js` |
-| Backend funcional | `api/guardar_resultado.php`, `api/obtener_ranking.php`, `database.sql` |
+| Backend funcional | Firebase Firestore, `firestore.rules`, `firestore.indexes.json`, `firebase.json`, `api/guardar_resultado_json.php` |
 | Animacion frontend | Estrellas, particulas, transiciones, carruseles y progreso |
 | Tres tipografias | `Cinzel Decorative`, `Cinzel`, `Crimson Pro` |
 | Responsive | Breakpoints en `style.css` y ajustes por JS |
@@ -677,4 +906,4 @@ php -l api/obtener_ranking.php
 
 ## 13. Conclusiones
 
-La version 0.9 refuerza los puntos criticos de evaluacion: documentacion obligatoria, backend PHP/MySQL real, fallback local para que el proyecto siempre sea revisable, test dinamico con banco de preguntas, responsive design, animaciones y trazabilidad mediante Git.
+La version 1.0 refuerza los puntos criticos de evaluacion: documentacion obligatoria, backend real con Firebase Firestore, fallback local para que el proyecto siempre sea revisable, copia JSON opcional mediante PHP, test dinamico con banco de preguntas, responsive design, animaciones y trazabilidad mediante Git.
